@@ -90,15 +90,37 @@
       </button>
     </nav>
 
-    <div style="padding:12px;border-top:1px solid #E5E5E5;margin:0 8px 6px;">
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:#F4F4F4;color:#262626;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12.5px;flex:0 0 32px;">SL</div>
+    <div style="position:relative;padding:12px;border-top:1px solid #E5E5E5;margin:0 8px 6px;">
+      <sc-if value="{{ profileMenuOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ profile.close }}" style="position:fixed;inset:0;z-index:40;"></div>
+        <div style="position:absolute;left:8px;right:8px;bottom:66px;z-index:50;background:#fff;border:1px solid #E5E5E5;border-radius:8px;box-shadow:0 12px 34px rgba(0,0,0,0.14);overflow:hidden;animation:pnfade .12s ease;">
+          <div style="display:flex;align-items:center;gap:11px;padding:14px;border-bottom:1px solid #F0F0F0;">
+            <div style="width:38px;height:38px;border-radius:50%;background:#07090D;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13.5px;flex:0 0 38px;">{{ profile.initials }}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="color:#0A0A0A;font-size:13.5px;font-weight:700;">{{ profile.name }}</div>
+              <div style="color:#A3A3A3;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ profile.email }}</div>
+            </div>
+          </div>
+          <div style="padding:6px;">
+            <button onClick="{{ profile.view }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:5px;border:none;background:transparent;color:#262626;font:inherit;font-size:13px;cursor:pointer;text-align:left;" style-hover="background:#F4F4F4;color:#0A0A0A;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span style="flex:1;">View profile</span>
+            </button>
+            <button onClick="{{ profile.logout }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:5px;border:none;background:transparent;color:#B31D15;font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:#FFF1F0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>
+              <span style="flex:1;">Log out</span>
+            </button>
+          </div>
+        </div>
+      </sc-if>
+      <button onClick="{{ profile.toggle }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:8px 8px;border-radius:6px;border:none;background:transparent;font:inherit;cursor:pointer;text-align:left;" style-hover="background:#F4F4F4;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F4F4F4;color:#262626;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12.5px;flex:0 0 32px;">{{ profile.initials }}</div>
         <div style="flex:1;min-width:0;">
-          <div style="color:#0A0A0A;font-size:13px;font-weight:600;">Serene Lau</div>
-          <div style="color:#A3A3A3;font-size:11px;">Operations Admin</div>
+          <div style="color:#0A0A0A;font-size:13px;font-weight:600;">{{ profile.name }}</div>
+          <div style="color:#A3A3A3;font-size:11px;">{{ profile.role }}</div>
         </div>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
-      </div>
+      </button>
     </div>
   </aside>
 
@@ -331,6 +353,7 @@
                     <div style="width:56px;font-size:13px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ p.time }}</div>
                     <div style="flex:1;font-size:12.5px;color:#525252;">{{ p.receivedLabel }}</div>
                     <span style="{{ p.pill.style }}">{{ p.pill.label }}</span>
+                    <sc-if value="{{ p.canMark }}" hint-placeholder-val="{{ false }}"><button onClick="{{ p.upload }}" title="Upload a photo on behalf of the officer" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.6"></path></svg> Add photo</button></sc-if>
                     <sc-if value="{{ p.canMark }}" hint-placeholder-val="{{ false }}"><button onClick="{{ p.mark }}" style="padding:6px 11px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;border-color:#0A0A0A;color:#0A0A0A;">Mark received</button></sc-if>
                   </div>
                 </sc-for>
@@ -390,13 +413,13 @@
             <div style="font-size:13px;color:#525252;flex:1;">Officer database. Add new officers who volunteered via WhatsApp.</div>
             <button onClick="{{ openOfficer }}" style="display:inline-flex;align-items:center;gap:7px;background:#0A0A0A;color:#fff;border:none;border-radius:4px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg> Add officer</button>
           </div>
-          <div style="background:#fff;border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
-            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 132px 62px 74px 54px 84px;font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:12px 20px;border-bottom:1px solid #E5E5E5;">
-              <div>OFFICER</div><div>WHATSAPP</div><div>IC</div><div style="text-align:right;">RATE</div><div style="text-align:center;">JOBS</div><div style="text-align:right;">STATUS</div>
+          <div style="background:#fff;border:1px solid #E5E5E5;border-radius:6px;overflow:visible;">
+            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 128px 58px 70px 48px 80px 118px;font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:12px 20px;border-bottom:1px solid #E5E5E5;">
+              <div>OFFICER</div><div>WHATSAPP</div><div>IC</div><div style="text-align:right;">RATE</div><div style="text-align:center;">JOBS</div><div style="text-align:right;">STATUS</div><div style="text-align:center;">ACTION</div>
             </div>
             <sc-for list="{{ officersView }}" as="o" hint-placeholder-count="8">
-              <div onClick="{{ o.open }}" style="display:grid;grid-template-columns:minmax(0,1.5fr) 132px 62px 74px 54px 84px;align-items:center;padding:13px 20px;border-bottom:1px solid #EEEEEE;cursor:pointer;" style-hover="background:#FAFAFA;">
-                <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+              <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 128px 58px 70px 48px 80px 118px;align-items:center;padding:13px 20px;border-bottom:1px solid #EEEEEE;" style-hover="background:#FAFAFA;">
+                <div onClick="{{ o.view }}" title="View officer" style="display:flex;align-items:center;gap:11px;min-width:0;cursor:pointer;">
                   <div style="width:34px;height:34px;border-radius:50%;background:#F4F4F4;color:#262626;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex:0 0 34px;">{{ o.initials }}</div>
                   <div style="min-width:0;"><div style="font-size:13px;font-weight:600;color:#0A0A0A;">{{ o.name }}</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A3A3A3;">{{ o.id }}</div></div>
                 </div>
@@ -405,6 +428,17 @@
                 <div style="text-align:right;font-size:12.5px;font-weight:600;color:#262626;font-family:'Geist Mono',monospace;">{{ o.rateLabel }}</div>
                 <div style="text-align:center;font-size:13px;font-weight:600;color:#525252;">{{ o.jobsCount }}</div>
                 <div style="display:flex;justify-content:flex-end;"><span style="{{ o.pill.style }}">{{ o.pill.label }}</span></div>
+                <div style="display:flex;align-items:center;justify-content:center;position:relative;">
+                  <button onClick="{{ o.menuToggle }}" title="Actions" style="{{ o.menuBtnStyle }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg></button>
+                  <sc-if value="{{ o.menuOpen }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ o.menuClose }}" style="position:fixed;inset:0;z-index:60;"></div>
+                    <div style="position:absolute;top:calc(100% + 4px);right:0;z-index:61;width:150px;background:#fff;border:1px solid #E5E5E5;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:5px;animation:pnfade .12s ease;">
+                      <button onClick="{{ o.view }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:4px;border:none;background:transparent;color:#262626;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;text-align:left;" style-hover="background:#F4F4F4;color:#0A0A0A;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg> View</button>
+                      <button onClick="{{ o.edit }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:4px;border:none;background:transparent;color:#262626;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;text-align:left;" style-hover="background:#F4F4F4;color:#0A0A0A;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> Edit</button>
+                      <button onClick="{{ o.del }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:4px;border:none;background:transparent;color:#B31D15;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:#FFF1F0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"></path></svg> Delete</button>
+                    </div>
+                  </sc-if>
+                </div>
               </div>
             </sc-for>
           </div>
@@ -546,6 +580,102 @@
         </div>
         </sc-if>
 
+        <!-- ===== MY PROFILE ===== -->
+        <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:pnfade .25s ease;max-width:1000px;">
+          <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+
+            <!-- Left: avatar card -->
+            <div style="flex:0 0 296px;max-width:100%;background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:26px 24px;">
+              <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+                <div style="position:relative;">
+                  <div style="width:100px;height:100px;border-radius:50%;background:#07090D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;">{{ profile.formInitials }}</div>
+                  <button onClick="{{ profile.changePhoto }}" title="Change photo" style="position:absolute;bottom:2px;right:2px;width:32px;height:32px;border-radius:50%;background:#0A0A0A;border:3px solid #fff;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#262626;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg></button>
+                </div>
+                <button onClick="{{ profile.changePhoto }}" style="margin-top:18px;width:100%;padding:9px 12px;border:1px solid #D4D4D4;border-radius:5px;background:#fff;color:#0A0A0A;font:inherit;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;">Change Photo</button>
+                <div style="margin-top:16px;font-size:13px;font-weight:600;color:#0A0A0A;">{{ profile.name }}</div>
+                <div style="font-size:12px;color:#A3A3A3;">{{ profile.role }}</div>
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid #F0F0F0;width:100%;font-family:'Geist Mono',monospace;font-size:10.5px;color:#A3A3A3;letter-spacing:0.04em;">MEMBER SINCE {{ profile.memberSince }}</div>
+              </div>
+            </div>
+
+            <!-- Right: forms -->
+            <div style="flex:1;min-width:300px;display:flex;flex-direction:column;gap:20px;">
+
+              <!-- Profile Information -->
+              <div style="background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:22px 24px;">
+                <div style="display:flex;align-items:center;gap:11px;margin-bottom:20px;">
+                  <div style="width:34px;height:34px;border-radius:7px;background:#F4F4F4;display:flex;align-items:center;justify-content:center;flex:0 0 34px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                  <div style="font-size:16px;font-weight:700;color:#0A0A0A;">Profile Information</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                  <div>
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">Full Name</label>
+                    <input value="{{ profile.form.name }}" onInput="{{ profile.pf.name }}" placeholder="Your full name" style="width:100%;padding:10px 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+                  </div>
+                  <div>
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">Email Address</label>
+                    <input type="email" value="{{ profile.form.email }}" onInput="{{ profile.pf.email }}" placeholder="you@company.com" style="width:100%;padding:10px 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+                  </div>
+                  <div>
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">Phone Number</label>
+                    <input value="{{ profile.form.phone }}" onInput="{{ profile.pf.phone }}" placeholder="+65 0000 0000" style="width:100%;padding:10px 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:13.5px;color:#0A0A0A;font-family:'Geist Mono',monospace;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+                  </div>
+                  <div>
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">Company</label>
+                    <div style="width:100%;padding:10px 12px;border:1px solid #EDEDED;border-radius:6px;font-size:13.5px;color:#A3A3A3;background:#FAFAFA;">{{ profile.company }}</div>
+                    <div style="font-size:11.5px;color:#A3A3A3;margin-top:6px;">Company name is managed at the tenant level.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security -->
+              <div style="background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:22px 24px;">
+                <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px;">
+                  <div style="width:34px;height:34px;border-radius:7px;background:#F4F4F4;display:flex;align-items:center;justify-content:center;flex:0 0 34px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                  <div style="font-size:16px;font-weight:700;color:#0A0A0A;">Security</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:13px;background:#FAFAFA;border:1px solid #EEEEEE;border-radius:7px;padding:14px 16px;">
+                  <div style="width:34px;height:34px;border-radius:7px;background:#fff;border:1px solid #E5E5E5;display:flex;align-items:center;justify-content:center;flex:0 0 34px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:700;color:#0A0A0A;">Password</div>
+                    <div style="font-size:12px;color:#A3A3A3;">Last changed {{ profile.pwChanged }}</div>
+                  </div>
+                  <button onClick="{{ profile.togglePw }}" style="padding:8px 15px;border:1px solid #D4D4D4;border-radius:5px;background:#fff;color:#0A0A0A;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F0F0F0;">Change</button>
+                </div>
+                <sc-if value="{{ profile.pwOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;border:1px solid #E5E5E5;border-radius:7px;padding:16px;display:flex;flex-direction:column;gap:14px;animation:pnfade .12s ease;">
+                    <div>
+                      <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">Current Password</label>
+                      <input type="password" value="{{ profile.pwForm.current }}" onInput="{{ profile.pw.current }}" placeholder="Enter current password" style="width:100%;padding:10px 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+                    </div>
+                    <div>
+                      <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">New Password</label>
+                      <input type="password" value="{{ profile.pwForm.next }}" onInput="{{ profile.pw.next }}" placeholder="At least 8 characters" style="width:100%;padding:10px 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+                    </div>
+                    <div>
+                      <label style="display:block;font-size:12.5px;font-weight:600;color:#262626;margin-bottom:6px;">Confirm New Password</label>
+                      <input type="password" value="{{ profile.pwForm.confirm }}" onInput="{{ profile.pw.confirm }}" placeholder="Re-enter new password" style="width:100%;padding:10px 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:10px;">
+                      <button onClick="{{ profile.togglePw }}" style="padding:9px 16px;border:1px solid #E5E5E5;border-radius:5px;background:#fff;color:#262626;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;">Cancel</button>
+                      <button onClick="{{ profile.savePw }}" style="padding:9px 16px;border:none;border-radius:5px;background:#0A0A0A;color:#fff;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#262626;">Update Password</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Footer actions -->
+          <div style="display:flex;justify-content:flex-end;gap:11px;margin-top:22px;padding-top:18px;border-top:1px solid #E5E5E5;">
+            <button onClick="{{ profile.cancel }}" style="padding:10px 20px;border:1px solid #D4D4D4;border-radius:6px;background:#fff;color:#262626;font:inherit;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;">Cancel</button>
+            <button onClick="{{ profile.save }}" style="padding:10px 22px;border:none;border-radius:6px;background:#0A0A0A;color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#262626;">Save Changes</button>
+          </div>
+        </div>
+        </sc-if>
+
       </div>
     </div>
   </main>
@@ -602,7 +732,7 @@
       <div style="background:#fff;border-radius:6px;width:520px;max-width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,0.16);">
         <div style="display:flex;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid #E5E5E5;position:sticky;top:0;background:#fff;">
           <div style="width:34px;height:34px;border-radius:4px;background:#F4F4F4;display:flex;align-items:center;justify-content:center;flex:0 0 34px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg></div>
-          <div style="flex:1;"><div style="font-size:16px;font-weight:700;color:#0A0A0A;">Add new officer</div><div style="font-size:12.5px;color:#A3A3A3;">Create a profile for an officer who volunteered.</div></div>
+          <div style="flex:1;"><div style="font-size:16px;font-weight:700;color:#0A0A0A;">{{ officerModalTitle }}</div><div style="font-size:12.5px;color:#A3A3A3;">{{ officerModalSub }}</div></div>
           <button onClick="{{ closeOfficer }}" style="width:30px;height:30px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#EEEEEE;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
         </div>
         <div style="padding:20px 24px;display:flex;flex-direction:column;gap:15px;">
@@ -629,7 +759,7 @@
         </div>
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:9px;padding:16px 24px;border-top:1px solid #E5E5E5;position:sticky;bottom:0;background:#fff;">
           <button onClick="{{ closeOfficer }}" style="padding:10px 16px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;">Cancel</button>
-          <button onClick="{{ saveOfficer }}" style="display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg> Add officer</button>
+          <button onClick="{{ saveOfficer }}" style="display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg> {{ officerModalCta }}</button>
         </div>
       </div>
     </div>
@@ -810,19 +940,53 @@
             <div style="font-size:13px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ officerDetail.payLabel }} <span style="font-size:11px;color:#A3A3A3;font-weight:500;">· {{ officerDetail.rateLabel }}</span></div>
           </div>
 
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Evidence photos posted</div><div style="flex:1;height:1px;background:#E5E5E5;"></div><span style="font-size:11.5px;color:#525252;font-weight:600;">{{ officerDetail.photoCount }} of {{ officerDetail.expectedCount }}</span></div>
-          <sc-if value="{{ officerDetail.hasPhotos }}" hint-placeholder-val="{{ true }}">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
-              <sc-for list="{{ officerDetail.photos }}" as="ph" hint-placeholder-count="2">
-                <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
-                  <div style="height:96px;"><image-slot id="{{ ph.slotId }}" shape="rect" placeholder="photo"></image-slot></div>
-                  <div style="padding:7px 9px;border-top:1px solid #E5E5E5;"><div style="font-size:12px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ ph.time }}</div><div style="font-size:10.5px;color:#A3A3A3;">sent {{ ph.at }}</div></div>
-                </div>
-              </sc-for>
-            </div>
-          </sc-if>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Evidence photos posted</div><div style="flex:1;height:1px;background:#E5E5E5;"></div><span style="font-size:11.5px;color:#525252;font-weight:600;">{{ officerDetail.photoCount }} of {{ officerDetail.expectedCount }}</span></div>
           <sc-if value="{{ officerDetail.noPhotos }}" hint-placeholder-val="{{ false }}">
-            <div style="border:1px dashed #D4D4D4;border-radius:6px;padding:28px;text-align:center;font-size:12.5px;color:#A3A3A3;">No evidence photos posted by this officer yet.</div>
+            <div style="font-size:12px;color:#A3A3A3;margin-bottom:10px;">No officer-submitted photos yet — you can add one on their behalf.</div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+            <sc-for list="{{ officerDetail.photos }}" as="ph" hint-placeholder-count="2">
+              <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
+                <sc-if value="{{ ph.hasSrc }}" hint-placeholder-val="{{ false }}"><div style="height:96px;background:#000;"><img src="{{ ph.src }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div></sc-if>
+                <sc-if value="{{ ph.noSrc }}" hint-placeholder-val="{{ true }}"><div style="height:96px;"><image-slot id="{{ ph.slotId }}" shape="rect" placeholder="photo"></image-slot></div></sc-if>
+                <div style="padding:7px 9px;border-top:1px solid #E5E5E5;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:12px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ ph.time }}</span><sc-if value="{{ ph.manual }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;font-weight:700;letter-spacing:0.04em;color:#8A5A00;background:#FFF4D6;padding:1px 5px;border-radius:3px;">ADMIN</span></sc-if></div><div style="font-size:10.5px;color:#A3A3A3;">{{ ph.stampLabel }}</div></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ officerDetail.canAddPhoto }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ officerDetail.openPhotoForm }}" title="Add a photo on behalf of this officer" style="border:1px dashed #C9C9C9;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:124px;cursor:pointer;color:#525252;background:#FAFAFA;" style-hover="border-color:#0A0A0A;color:#0A0A0A;background:#F4F4F4;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.5"></path></svg>
+                <span style="font-size:11.5px;font-weight:600;">Add photo</span>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ officerDetail.addOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;border:1px solid #E5E5E5;border-radius:6px;padding:14px;background:#FAFAFA;">
+              <div style="font-size:12.5px;font-weight:700;color:#0A0A0A;margin-bottom:2px;">Add photo on behalf of officer</div>
+              <div style="font-size:11px;color:#A3A3A3;margin-bottom:12px;">Attach the photo the officer sent, then enter the exact date and time it was sent (e.g. from the personal chat) — not the current time.</div>
+              <div style="margin-bottom:11px;">
+                <label style="display:block;font-size:11px;font-weight:600;color:#262626;margin-bottom:5px;">Photo</label>
+                <sc-if value="{{ officerDetail.hasPhoto }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:11px;border:1px solid #E5E5E5;border-radius:6px;padding:8px;background:#fff;">
+                    <div style="width:64px;height:64px;border-radius:4px;overflow:hidden;background:#000;flex:0 0 64px;"><img src="{{ officerDetail.formPhoto }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+                    <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#0A0A0A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ officerDetail.formPhotoName }}</div><div style="font-size:10.5px;color:#0A7A3B;font-weight:600;">Attached ✓</div></div>
+                    <button onClick="{{ officerDetail.clearPhoto }}" title="Remove" style="width:28px;height:28px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#B31D15;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 28px;" style-hover="background:#FFF1F0;border-color:#F5C6C2;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                  </div>
+                </sc-if>
+                <label style="display:flex;align-items:center;justify-content:center;gap:8px;border:1px dashed #C9C9C9;border-radius:6px;padding:14px;cursor:pointer;background:#fff;color:#525252;font-size:12.5px;font-weight:600;margin-top:9px;" style-hover="border-color:#0A0A0A;color:#0A0A0A;background:#FAFAFA;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5M12 3v12"></path></svg>
+                  <span>{{ officerDetail.uploadLabel }}</span>
+                  <input type="file" accept="image/*" onChange="{{ officerDetail.opf.photo }}" style="display:none;">
+                </label>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 130px;gap:10px;">
+                <div><label style="display:block;font-size:11px;font-weight:600;color:#262626;margin-bottom:5px;">Date sent</label><input type="date" value="{{ officerDetail.formDate }}" onInput="{{ officerDetail.opf.date }}" style="width:100%;padding:8px 10px;border:1px solid #E5E5E5;border-radius:4px;font-size:13px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;"></div>
+                <div><label style="display:block;font-size:11px;font-weight:600;color:#262626;margin-bottom:5px;">Time sent</label><input type="time" value="{{ officerDetail.formTime }}" onInput="{{ officerDetail.opf.time }}" placeholder="18:20" style="width:100%;padding:8px 10px;border:1px solid #E5E5E5;border-radius:4px;font-size:13px;color:#0A0A0A;outline:none;background:#fff;font-family:'Geist Mono',monospace;" style-focus="border-color:#0A0A0A;"></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:13px;">
+                <button onClick="{{ officerDetail.cancelPhoto }}" style="padding:8px 14px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;">Cancel</button>
+                <button onClick="{{ officerDetail.savePhoto }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg> Add photo</button>
+              </div>
+            </div>
           </sc-if>
         </div>
       </div>
@@ -840,6 +1004,8 @@
             <div style="font-family:'Geist Mono',monospace;font-size:12px;color:#A3A3A3;">{{ officerProfile.id }} · {{ officerProfile.phone }} · {{ officerProfile.rateLabel }}</div>
           </div>
           <button onClick="{{ officerProfile.wa }}" title="Copy WhatsApp message" style="width:32px;height:32px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#525252;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#EEEEEE;color:#0A0A0A;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-9A8.5 8.5 0 1 1 21 11.5Z"></path></svg></button>
+          <button onClick="{{ officerProfile.edit }}" title="Edit officer" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;color:#0A0A0A;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> Edit</button>
+          <button onClick="{{ officerProfile.del }}" title="Delete officer" style="width:32px;height:32px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#B31D15;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#FFF1F0;border-color:#F5C6C2;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"></path></svg></button>
           <button onClick="{{ officerProfile.close }}" style="width:32px;height:32px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#EEEEEE;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
         </div>
 
@@ -985,8 +1151,12 @@ class Component extends DCLogic {
   state = {
     screen:'dashboard', jobId:'PN-2041', jobTab:'overview', toast:null, addPick:'', jobFilter:'All', summaryJobId:'PN-2044', summaryDetail:false, reportType:'Completed job report',
     createOpen:false, form:{customer:'',location:'',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''},
-    officerOpen:false, oform:{name:'',phone:'',rate:'16',ic:false,status:'New',notes:''},
-    reportOpen:false, officerDetailOid:null, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null,
+    officerOpen:false, officerEditId:null, officerMenuId:null, oform:{name:'',phone:'',rate:'16',ic:false,status:'New',notes:''},
+    reportOpen:false, officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null,
+    profileMenuOpen:false,
+    admin:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233', role:'Operations Admin', team:'PilotNow Security Ops', company:'PilotNow Security Pte Ltd', memberSince:'Jan 2025', pwChanged:'1 month ago' },
+    pform:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233' },
+    pwOpen:false, pwForm:{current:'',next:'',confirm:''},
     billOpen:false, billId:null, bform:{invoice:'',billedDate:'2026-07-08'},
     requestOpen:false, rform:{customer:'',method:'WhatsApp',location:'',jobDate:'2026-07-12',start:'09:00',end:'18:00',officers:'2',notes:''},
     officers:[
@@ -1122,18 +1292,40 @@ class Component extends DCLogic {
   removeOfficer(id,oid){ this._mutJob(id,j=>{ j.officers=j.officers.filter(o=>o.oid!==oid); return j; }); this.toastMsg('Officer removed from job'); }
   addOfficer(id){ const oid=this.state.addPick; if(!oid) return; const job=this.state.jobs.find(j=>j.id===id); const src=this.state.officers.find(o=>o.id===oid); if(!src){return;} if(src.status==='Blocked'){ this.toastMsg('Blocked officers cannot be added'); return; } if(job.officers.some(o=>o.oid===oid)){ this.toastMsg('Officer already added to this job'); return; } this._mutJob(id,j=>{ j.officers=[...j.officers,{oid:src.id,name:src.name,ic:src.ic?'Yes':'No',rate:src.rate,confirmed:false,onDuty:false,actualStart:'',actualEnd:''}]; return j; }); this.setState({addPick:''}); this.toastMsg(src.name+' added'); }
   markPhoto(id,i){ this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,status:'received',at:p.time,by:(j.officers[0]&&j.officers[0].name)||'Officer'}:p); return j; }); this.toastMsg('Photo marked as received'); }
-  uploadPhoto(id,i){ this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,status:'received',at:p.time,by:'Admin (manual upload)'}:p); return j; }); this.toastMsg('Photo uploaded manually'); }
+  uploadPhoto(id,i){ this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,status:'received',at:p.time,by:'Admin (on behalf of officer)'}:p); return j; }); this.toastMsg('Photo added on behalf of the officer'); }
   markPhotoMissing(id,i){ this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,status:'missing',at:'',by:''}:p); return j; }); this.toastMsg('Checkpoint marked as missing'); }
   addPhotoNote(id,i){ const cur=(this.state.jobs.find(j=>j.id===id).photos[i].note)||''; const note=window.prompt('Admin note for this checkpoint:',cur); if(note===null) return; this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,note:note.trim()}:p); return j; }); this.toastMsg(note.trim()?'Note saved':'Note cleared'); }
   completeJob(id){ const job=this.state.jobs.find(j=>j.id===id); if(!job.officers.length){ this.toastMsg('Add at least one officer before completing'); return; } this._mutJob(id,j=>{ j.status='Completed'; j.officers=j.officers.map(o=>({...o, actualStart:o.actualStart||j.start, actualEnd:o.actualEnd||j.end})); return j; }); this.toastMsg('Job marked as completed'); }
   cancelJob(id){ this._mutJob(id,j=>{ j.status='Cancelled'; j.cancelReason=j.cancelReason||'Cancelled by admin'; return j; }); this.toastMsg('Job cancelled'); }
-  openOfficer(){ this.setState({officerOpen:true, oform:{name:'',phone:'+65 ',rate:'16',ic:false,status:'New',notes:''}}); }
-  closeOfficer(){ this.setState({officerOpen:false}); }
+  openOfficer(){ this.setState({officerOpen:true, officerEditId:null, oform:{name:'',phone:'+65 ',rate:'16',ic:false,status:'New',notes:''}}); }
+  editOfficer(id){ const o=this.state.officers.find(x=>x.id===id); if(!o) return; this.setState({officerOpen:true, officerEditId:id, officerMenuId:null, officerProfileId:null, oform:{name:o.name,phone:o.phone,rate:String(o.rate),ic:!!o.ic,status:o.status,notes:(o.notes||'')}}); }
+  deleteOfficer(id){ const o=this.state.officers.find(x=>x.id===id); if(!o) return; this.setState({officerMenuId:null}); if(!window.confirm('Delete officer '+o.name+' ('+o.id+')? This cannot be undone.')) return; this.setState(s=>({officers:s.officers.filter(x=>x.id!==id), officerProfileId:s.officerProfileId===id?null:s.officerProfileId})); this.toastMsg('Officer '+o.name+' deleted'); }
+  openOfficerFromMenu(id){ this.setState({officerMenuId:null}); this.openOfficerProfile(id); }
+  toggleOfficerMenu(id){ this.setState(s=>({officerMenuId: s.officerMenuId===id? null : id})); }
+  closeOfficerMenu(){ this.setState({officerMenuId:null}); }
+  closeOfficer(){ this.setState({officerOpen:false, officerEditId:null}); }
   setOF(k,v){ this.setState(s=>({oform:{...s.oform,[k]:v}})); }
-  saveOfficer(){ const f=this.state.oform; if(!f.name.trim()||f.phone.replace(/[^0-9]/g,'').length<6){ this.toastMsg('Enter a name and valid WhatsApp number'); return; } const nums=this.state.officers.map(o=>parseInt(o.id.replace('OF-',''),10)||0); const nid='OF-'+String(Math.max(0,...nums)+1).padStart(2,'0'); const officer={id:nid,name:f.name.trim(),phone:f.phone.trim(),status:f.status,ic:!!f.ic,rate:Number(f.rate)||14,jobsCount:0,notes:(f.notes||'').trim()}; this.setState(s=>({officers:[officer,...s.officers],officerOpen:false})); this.toastMsg('Officer '+f.name.trim()+' added'); }
+  saveOfficer(){ const f=this.state.oform; if(!f.name.trim()||f.phone.replace(/[^0-9]/g,'').length<6){ this.toastMsg('Enter a name and valid WhatsApp number'); return; } const editId=this.state.officerEditId; if(editId){ this.setState(s=>({officers:s.officers.map(o=> o.id===editId?{...o,name:f.name.trim(),phone:f.phone.trim(),status:f.status,ic:!!f.ic,rate:Number(f.rate)||14,notes:(f.notes||'').trim()}:o), officerOpen:false, officerEditId:null})); this.toastMsg('Officer '+f.name.trim()+' updated'); return; } const nums=this.state.officers.map(o=>parseInt(o.id.replace('OF-',''),10)||0); const nid='OF-'+String(Math.max(0,...nums)+1).padStart(2,'0'); const officer={id:nid,name:f.name.trim(),phone:f.phone.trim(),status:f.status,ic:!!f.ic,rate:Number(f.rate)||14,jobsCount:0,notes:(f.notes||'').trim()}; this.setState(s=>({officers:[officer,...s.officers],officerOpen:false})); this.toastMsg('Officer '+f.name.trim()+' added'); }
+  openPhotoForm(jobId){ const job=this.state.jobs.find(j=>j.id===jobId); this.setState({opAddOpen:true, opForm:{date:(job&&job.date)||'', time:'', photo:'', photoName:''}}); }
+  cancelPhotoForm(){ this.setState({opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
+  setOPF(k,v){ this.setState(s=>({opForm:{...s.opForm,[k]:v}})); }
+  pickPhoto(e){ const file=e&&e.target&&e.target.files&&e.target.files[0]; if(!file){ return; } if(!/^image\//.test(file.type)){ this.toastMsg('Please choose an image file'); return; } const rd=new FileReader(); rd.onload=()=>{ this.setState(s=>({opForm:{...s.opForm,photo:rd.result,photoName:file.name}})); }; rd.readAsDataURL(file); }
+  clearPhotoPick(){ this.setState(s=>({opForm:{...s.opForm,photo:'',photoName:''}})); }
+  saveOfficerPhoto(jobId,oid){ const job=this.state.jobs.find(j=>j.id===jobId); if(!job) return; const part=job.officers.find(o=>o.oid===oid); if(!part) return; const f=this.state.opForm; if(!f.photo){ this.toastMsg('Attach the photo first'); return; } const t=(f.time||'').trim(); if(!/^\d{1,2}:\d{2}$/.test(t)){ this.toastMsg('Enter the time the officer sent the photo, e.g. 18:20'); return; } const [hh,mm]=t.split(':'); if(+hh>23||+mm>59){ this.toastMsg('Enter a valid 24-hour time, e.g. 18:20'); return; } const time=String(+hh).padStart(2,'0')+':'+mm; if(!f.date){ this.toastMsg('Pick the date the photo was sent'); return; } const stamp=this.dLabel(f.date); const uid='m-'+oid+'-'+time.replace(':','')+'-'+job.photos.length; this._mutJob(jobId,j=>{ j.photos=[...j.photos,{time:time,status:'received',by:part.name,at:time,dateStamp:stamp,manual:true,uid:uid,src:f.photo}]; return j; }); this.setState({opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); this.toastMsg('Photo added for '+part.name+' · '+stamp+' '+time); }
+  toggleProfileMenu(){ this.setState(s=>({profileMenuOpen:!s.profileMenuOpen})); }
+  closeProfileMenu(){ this.setState({profileMenuOpen:false}); }
+  openAdminProfile(){ this.setState(s=>({screen:'profile', profileMenuOpen:false, pform:{name:s.admin.name,email:s.admin.email,phone:s.admin.phone}, pwOpen:false, pwForm:{current:'',next:'',confirm:''}})); }
+  setPF(k,v){ this.setState(s=>({pform:{...s.pform,[k]:v}})); }
+  saveProfile(){ const f=this.state.pform; if(!f.name.trim()){ this.toastMsg('Full name cannot be empty'); return; } if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.trim())){ this.toastMsg('Enter a valid email address'); return; } this.setState(s=>({admin:{...s.admin, name:f.name.trim(), email:f.email.trim(), phone:f.phone.trim()}})); this.toastMsg('Profile updated'); }
+  cancelProfile(){ this.setState(s=>({pform:{name:s.admin.name,email:s.admin.email,phone:s.admin.phone}, pwOpen:false, screen:'dashboard'})); }
+  changePhoto(){ this.toastMsg('Photo upload coming soon (demo)'); }
+  togglePwChange(){ this.setState(s=>({pwOpen:!s.pwOpen, pwForm:{current:'',next:'',confirm:''}})); }
+  setPW(k,v){ this.setState(s=>({pwForm:{...s.pwForm,[k]:v}})); }
+  savePassword(){ const f=this.state.pwForm; if(!f.current){ this.toastMsg('Enter your current password'); return; } if((f.next||'').length<8){ this.toastMsg('New password must be at least 8 characters'); return; } if(f.next!==f.confirm){ this.toastMsg('New passwords do not match'); return; } this.setState(s=>({admin:{...s.admin,pwChanged:'just now'}, pwOpen:false, pwForm:{current:'',next:'',confirm:''}})); this.toastMsg('Password updated'); }
+  logout(){ this.setState({profileMenuOpen:false}); this.toastMsg('You have been logged out (demo)'); }
   openReport(){ this.setState({reportOpen:true}); }
-  openOfficerDetail(oid){ this.setState({officerDetailOid:oid}); }
-  closeOfficerDetail(){ this.setState({officerDetailOid:null}); }
+  openOfficerDetail(oid){ this.setState({officerDetailOid:oid, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
+  closeOfficerDetail(){ this.setState({officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
   openOfficerProfile(id){ this.setState({officerProfileId:id}); }
   closeOfficerProfile(){ this.setState({officerProfileId:null}); }
   closeReport(){ this.setState({reportOpen:false}); }
@@ -1181,7 +1373,7 @@ class Component extends DCLogic {
     const missingList=missingAll;
     const notBilledList=notBilledJobs.map(j=>({jobId:j.id,customer:j.customer,jobDate:this.dLabel(j.date),open:()=>this.openJob(j.id)}));
 
-    const titles={dashboard:['Overview','Dashboard'],requests:['Operations','Job Requests'],jobs:['Operations','Jobs'],jobDetail:['Operations · Jobs',S.jobId],shift:['Operations','Shift Monitoring'],officers:['People','Officer Management'],summary:['Finance','Completed Job Summary'],payments:['Finance','Officer Payment'],billing:['Finance','Customer Billing'],reports:['Insights','Reports']};
+    const titles={dashboard:['Overview','Dashboard'],requests:['Operations','Job Requests'],jobs:['Operations','Jobs'],jobDetail:['Operations · Jobs',S.jobId],shift:['Operations','Shift Monitoring'],officers:['People','Officer Management'],summary:['Finance','Completed Job Summary'],payments:['Finance','Officer Payment'],billing:['Finance','Customer Billing'],reports:['Insights','Reports'],profile:['Account','My Profile']};
     const t=titles[S.screen]||['',''];
 
     // ---- pills for other domains ----
@@ -1206,9 +1398,15 @@ class Component extends DCLogic {
     const jobsFiltered=(jf==='All'?jobs.slice():jobs.filter(j=>j.status===jf)).sort((a,b)=>(jobStatusOrder[a.status]??9)-(jobStatusOrder[b.status]??9)).map(enrich);
 
     // ---- Officer Management ----
-    const officersView=S.officers.map(o=>({...o, pill:offPill(o.status), icPill:icPill(o.ic), rateLabel:this.money(o.rate)+'/h', initials:o.name.split(' ').map(x=>x[0]).slice(0,2).join(''), phoneShort:o.phone,
+    const menuBtnBase='width:28px;height:28px;border-radius:4px;border:1px solid #E5E5E5;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 28px;color:#525252;';
+    const officersView=S.officers.map(o=>{ const menuOpen=S.officerMenuId===o.id; return {...o, pill:offPill(o.status), icPill:icPill(o.ic), rateLabel:this.money(o.rate)+'/h', initials:o.name.split(' ').map(x=>x[0]).slice(0,2).join(''), phoneShort:o.phone,
       open:()=>this.openOfficerProfile(o.id),
-      wa:()=>this.copy('Hi '+o.name+', ','WhatsApp message copied') }));
+      menuOpen, menuBtnStyle: menuBtnBase+(menuOpen?'background:#F4F4F4;color:#0A0A0A;':'background:#fff;'),
+      menuToggle:()=>this.toggleOfficerMenu(o.id), menuClose:()=>this.closeOfficerMenu(),
+      view:()=>this.openOfficerFromMenu(o.id),
+      edit:()=>this.editOfficer(o.id),
+      del:()=>this.deleteOfficer(o.id),
+      wa:()=>this.copy('Hi '+o.name+', ','WhatsApp message copied') }; });
 
     // ---- Officer profile + job history (click a row on Officer Management) ----
     let officerProfileView=null;
@@ -1219,6 +1417,7 @@ class Component extends DCLogic {
       officerProfileView={ id:o.id, name:o.name, initials:o.name.split(' ').map(x=>x[0]).slice(0,2).join(''), phone:o.phone, pill:offPill(o.status), icPill:icPill(o.ic), rateLabel:this.money(o.rate)+'/h', statusLabel:o.status, icLabel:o.ic?'Received':'Not received', notes:(o.notes||'').trim()||'No notes on file.',
         jobsTotal:hist.length, completedTotal:hist.filter(h=>h.pill.label==='Completed').length, totalHoursLabel:totalHours.toFixed(2)+'h', totalPayLabel:this.money(totalPay),
         history:hist, hasHistory:hist.length>0, noHistory:hist.length===0, close:()=>this.closeOfficerProfile(),
+        edit:()=>this.editOfficer(o.id), del:()=>this.deleteOfficer(o.id),
         wa:()=>this.copy('Hi '+o.name+', ','WhatsApp message copied') }; } }
 
     // ---- Selected job (Job Detail hero) ----
@@ -1244,8 +1443,11 @@ class Component extends DCLogic {
         dutyPill: o.onDuty?smallPill('#E8EEF9','#1F4FA3','On duty'):smallPill('#FAFAFA','#525252','Off duty'),
         dutyState, checkIn:o.actualStart||'—', checkOut:o.actualEnd||'—', workedLabel:worked?worked.toFixed(2)+'h':'—', rateLabel:this.money(o.rate)+'/h', payLabel:this.money(pay),
         scheduledLabel:sel.start+'–'+sel.end, jobId:sel.id, jobCustomer:sel.customer, jobLocation:sel.location, jobDate:this.dLabel(sel.date),
-        photos:myPhotos.map(p=>({time:p.time, at:p.at||p.time, slotId:'odph-'+sel.id+'-'+o.oid+'-'+p.time.replace(':','')})), photoCount:myPhotos.length, hasPhotos:myPhotos.length>0, noPhotos:myPhotos.length===0,
-        expectedCount:sel.photos.length, close:()=>this.closeOfficerDetail(),
+        photos:myPhotos.map((p,pi)=>({time:p.time, at:p.at||p.time, dateStamp:p.dateStamp||this.dLabel(sel.date), manual:!!p.manual, stampLabel:(p.dateStamp||this.dLabel(sel.date))+' · '+(p.at||p.time), src:p.src||'', hasSrc:!!p.src, noSrc:!p.src, slotId:'odph-'+sel.id+'-'+o.oid+'-'+(p.uid||(p.time.replace(':','')+'-'+pi))})), photoCount:myPhotos.length, hasPhotos:myPhotos.length>0, noPhotos:myPhotos.length===0,
+        expectedCount:sel.photos.length, close:()=>this.closeOfficerDetail(), canAddPhoto:!isCancelled,
+        addOpen:S.opAddOpen, formDate:S.opForm.date, formTime:S.opForm.time, formPhoto:S.opForm.photo, formPhotoName:S.opForm.photoName, hasPhoto:!!S.opForm.photo, uploadLabel:S.opForm.photo?'Replace photo':'Choose a photo to upload',
+        openPhotoForm:()=>this.openPhotoForm(sel.id), savePhoto:()=>this.saveOfficerPhoto(sel.id,o.oid), cancelPhoto:()=>this.cancelPhotoForm(), clearPhoto:()=>this.clearPhotoPick(),
+        opf:{ date:(e)=>this.setOPF('date',e.target.value), time:(e)=>this.setOPF('time',e.target.value), photo:(e)=>this.pickPhoto(e) },
         copyWa:()=>this.copy('Hi '+o.name+', regarding Job '+sel.id+' at '+sel.location+' — ','WhatsApp message copied') }; } }
     const stepDefs=[['Draft','Draft created'],['posted','Posted / Waiting'],['Confirmed','Officers confirmed'],['Ongoing','Job ongoing'],['Completed','Completed']];
     const statusIdx={'Draft':0,'Posted to WhatsApp':1,'Waiting for Officers':1,'Confirmed':2,'Ongoing':3,'Completed':4}[sel.status];
@@ -1256,7 +1458,7 @@ class Component extends DCLogic {
       showCheck:st==='done', showDot:st!=='done'}; });
     const jobMsg='🛡️ *PilotNow Job '+sel.id+'*\n📍 '+sel.location+'\n📅 '+this.dLabel(sel.date)+', '+sel.start+'–'+sel.end+'\n👮 '+sel.required+' officers needed\nRate: '+this.money(sel.officers[0]?sel.officers[0].rate:16)+'/h\n\n'+sel.description+'\n\nReply *IN* to volunteer.';
     const reminderMsg='⏰ Reminder — Job '+sel.id+' at '+sel.location+' starts today '+sel.start+'. Please send your hourly proof photo every hour to this group. – PilotNow Ops';
-    const selPhotos=sel.photos.map((p,i)=>{ const meta= p.status==='received'?{bg:'#E8F5EC',fg:'#0A7A3B',label:'Received',dot:'#0A7A3B'}: p.status==='missing'?{bg:'#FFF1F0',fg:'#B31D15',label:'Missing',dot:'#FF3B30'}:{bg:'#FAFAFA',fg:'#525252',label:'Upcoming',dot:'#A3A3A3'}; return {...p, meta, pill:smallPill(meta.bg,meta.fg,meta.label), dotStyle:`width:9px;height:9px;border-radius:50%;background:${meta.dot};flex:0 0 9px;`, canMark:p.status!=='received', receivedLabel:p.status==='received'?('by '+p.by+' · '+p.at):(p.status==='missing'?'No photo received':'Not due yet'), mark:()=>this.markPhoto(sel.id,i) }; });
+    const selPhotos=sel.photos.map((p,i)=>{ const meta= p.status==='received'?{bg:'#E8F5EC',fg:'#0A7A3B',label:'Received',dot:'#0A7A3B'}: p.status==='missing'?{bg:'#FFF1F0',fg:'#B31D15',label:'Missing',dot:'#FF3B30'}:{bg:'#FAFAFA',fg:'#525252',label:'Upcoming',dot:'#A3A3A3'}; return {...p, meta, pill:smallPill(meta.bg,meta.fg,meta.label), dotStyle:`width:9px;height:9px;border-radius:50%;background:${meta.dot};flex:0 0 9px;`, canMark:p.status!=='received', receivedLabel:p.status==='received'?('by '+p.by+' · '+p.at):(p.status==='missing'?'No photo received':'Not due yet'), mark:()=>this.markPhoto(sel.id,i), upload:()=>this.uploadPhoto(sel.id,i) }; });
     const selPhotosReceived=sel.photos.filter(p=>p.status==='received').length;
     const addOptions=[{value:'',label:'Add participating officer…'}].concat(S.officers.filter(o=>o.status!=='Blocked'&&!sel.officers.some(x=>x.oid===o.id)).map(o=>({value:o.id,label:o.name+' · '+this.money(o.rate)+'/h'+(o.ic?'':' · no IC')})));
     const selView={...sel, pill:this.pillOf(sel.status), billPill:billPill(sel.billing), dateLabel:this.dLabel(sel.date), timeLabel:sel.start+'–'+sel.end, schedHoursLabel:schedHours+'h scheduled', isCancelled, isCompleted,
@@ -1368,7 +1570,7 @@ class Component extends DCLogic {
       navStyle, navTo, badge, stats,
       crumb:t[0], pageTitle:t[1],
       todayLabel:this.dLabel(this.TODAY), todayLabelShort:this.dLabel(this.TODAY),
-      isDashboard:S.screen==='dashboard', isRequests:S.screen==='requests', isJobs:S.screen==='jobs', isJobDetail:S.screen==='jobDetail', isOfficers:S.screen==='officers', isShift:S.screen==='shift', isSummary:S.screen==='summary', isPayments:S.screen==='payments', isBilling:S.screen==='billing', isReports:S.screen==='reports',
+      isDashboard:S.screen==='dashboard', isRequests:S.screen==='requests', isJobs:S.screen==='jobs', isJobDetail:S.screen==='jobDetail', isOfficers:S.screen==='officers', isShift:S.screen==='shift', isSummary:S.screen==='summary', isPayments:S.screen==='payments', isBilling:S.screen==='billing', isReports:S.screen==='reports', isProfile:S.screen==='profile',
       jobsView, todayJobsList, missingList, notBilledList,
       requestsView,
       filterTabs, jobsFiltered,
@@ -1399,9 +1601,20 @@ class Component extends DCLogic {
       cf:{ customer:(e)=>this.setF('customer',e.target.value), location:(e)=>this.setF('location',e.target.value), date:(e)=>this.setF('date',e.target.value), start:(e)=>this.setF('start',e.target.value), end:(e)=>this.setF('end',e.target.value), required:(e)=>this.setF('required',e.target.value), description:(e)=>this.setF('description',e.target.value), instructions:(e)=>this.setF('instructions',e.target.value) },
       reqOptions:[1,2,3,4,5,6,7,8].map(n=>({value:String(n),label:n+' officer'+(n>1?'s':'')})),
       officerOpen:S.officerOpen, oform:S.oform, openOfficer:()=>this.openOfficer(), closeOfficer:()=>this.closeOfficer(), saveOfficer:()=>this.saveOfficer(),
+      officerModalTitle:S.officerEditId?'Edit officer':'Add new officer', officerModalSub:S.officerEditId?('Update the profile for '+S.officerEditId+'.'):'Create a profile for an officer who volunteered.', officerModalCta:S.officerEditId?'Save changes':'Add officer',
       of:{ name:(e)=>this.setOF('name',e.target.value), phone:(e)=>this.setOF('phone',e.target.value), rate:(e)=>this.setOF('rate',e.target.value), status:(e)=>this.setOF('status',e.target.value), notes:(e)=>this.setOF('notes',e.target.value), icToggle:()=>this.setOF('ic',!S.oform.ic) },
       statusOptions:['New','Active','Inactive','Blocked'].map(s=>({value:s,label:s})),
       icBoxStyle:'width:22px;height:22px;border-radius:6px;flex:0 0 22px;display:flex;align-items:center;justify-content:center;transition:all .12s;'+(S.oform.ic?'background:#0A0A0A;border:1px solid #0A0A0A;':'background:#fff;border:1px solid #D4D4D4;'),
+      profileMenuOpen:S.profileMenuOpen,
+      profile:(()=>{ const A=S.admin, F=S.pform||{}; const ini=(s)=>((s||'').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('')||'?').toUpperCase();
+        return { name:A.name, initials:ini(A.name), role:A.role, email:A.email, phone:A.phone, team:A.team, company:A.company, memberSince:A.memberSince, lastLogin:this.dLabel(this.TODAY)+' · 09:12', pwChanged:A.pwChanged,
+        toggle:()=>this.toggleProfileMenu(), close:()=>this.closeProfileMenu(), view:()=>this.openAdminProfile(), back:()=>this.setState({screen:'dashboard'}), logout:()=>this.logout(),
+        form:F, formInitials:ini(F.name),
+        pf:{ name:(e)=>this.setPF('name',e.target.value), email:(e)=>this.setPF('email',e.target.value), phone:(e)=>this.setPF('phone',e.target.value) },
+        save:()=>this.saveProfile(), cancel:()=>this.cancelProfile(), changePhoto:()=>this.changePhoto(),
+        pwOpen:S.pwOpen, togglePw:()=>this.togglePwChange(), pwForm:S.pwForm,
+        pw:{ current:(e)=>this.setPW('current',e.target.value), next:(e)=>this.setPW('next',e.target.value), confirm:(e)=>this.setPW('confirm',e.target.value) },
+        savePw:()=>this.savePassword() }; })(),
       toast:S.toast,
     };
   }
