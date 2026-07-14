@@ -390,6 +390,7 @@
                   <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:12.5px;color:#525252;">Required</span><span style="font-size:13px;font-weight:700;color:#0A0A0A;">{{ sel.requiredLabel }}</span></div>
                   <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:12.5px;color:#525252;">Confirmed</span><span style="font-size:13px;font-weight:700;color:#1F4FA3;">{{ sel.confirmedLabel }}</span></div>
                   <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:12.5px;color:#525252;">Reported on duty</span><span style="font-size:13px;font-weight:700;color:#1F4FA3;">{{ sel.onDutyLabel }}</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:12.5px;color:#525252;">Checked out</span><span style="font-size:13px;font-weight:700;color:#0A7A3B;">{{ sel.checkedOutLabel }}</span></div>
                 </div>
               </div>
 
@@ -1500,6 +1501,7 @@ class Component extends DCLogic {
     const selTotalPay=selOfficers.reduce((a,o)=>a+o.pay,0);
     const confirmedCount=sel.officers.filter(o=>o.confirmed).length;
     const onDutyCount=sel.officers.filter(o=>o.onDuty).length;
+    const checkedOutCount=sel.officers.filter(o=>o.actualEnd).length;
     const stillNeeded=Math.max(0,sel.required-sel.officers.length);
 
     // ---- Officer duty detail (click an officer row) ----
@@ -1546,7 +1548,7 @@ class Component extends DCLogic {
       reportBtnStyle: reportBtnBase+(reportEnabled?'background:#0A0A0A;color:#fff;cursor:pointer;':'background:#F4F4F4;color:#A3A3A3;cursor:not-allowed;'),
       reportHint: reportEnabled?'Open the signed job report':'Job Report unlocks after the site manager signs off',
       signedByLabel: sel.signedBy||sel.customer, signedDateLabel: sel.signedDate?this.dLabel(sel.signedDate):this.dLabel(this.TODAY),
-      totalPayLabel:this.money(selTotalPay), confirmedLabel:confirmedCount+'/'+sel.officers.length, onDutyLabel:onDutyCount+'/'+sel.officers.length, stillNeeded, requiredLabel:sel.officers.length+' of '+sel.required };
+      totalPayLabel:this.money(selTotalPay), confirmedLabel:confirmedCount+'/'+sel.officers.length, onDutyLabel:onDutyCount+'/'+sel.officers.length, checkedOutLabel:checkedOutCount+'/'+sel.officers.length, stillNeeded, requiredLabel:sel.officers.length+' of '+sel.required };
 
     // ---- Job Report (all info + evidence photos grouped by officer) ----
     // ---- Job Report — Delivery-Order editorial layout ----
