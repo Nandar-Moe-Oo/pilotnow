@@ -268,7 +268,7 @@
                     <div style="font-size:13.5px;color:#525252;margin-top:2px;">{{ sel.location }}</div>
                   </div>
                   <div style="display:flex;align-items:center;gap:8px;flex:0 0 auto;">
-                    <button onClick="{{ openReport }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M9 13h6M9 17h4"></path></svg> Job Report</button>
+                    <button onClick="{{ reportClick }}" title="{{ sel.reportHint }}" style="{{ sel.reportBtnStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M9 13h6M9 17h4"></path></svg> Job Report</button>
                     <button onClick="{{ editSel }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> Edit</button>
                   </div>
                 </div>
@@ -316,7 +316,7 @@
                   </div>
                 </sc-if>
                 <div style="display:grid;grid-template-columns:1.5fr auto auto auto auto auto;font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;border-top:1px solid #F4F4F4;border-bottom:1px solid #F4F4F4;">
-                  <div>OFFICER</div><div style="width:60px;">IC</div><div style="width:64px;text-align:right;">RATE</div><div style="width:96px;text-align:center;">CONFIRM</div><div style="width:110px;text-align:center;">ON DUTY</div><div style="width:34px;"></div>
+                  <div>OFFICER</div><div style="width:60px;">IC</div><div style="width:64px;text-align:right;">RATE</div><div style="width:96px;text-align:center;">CONFIRM</div><div style="width:110px;text-align:center;">ON DUTY</div><div style="width:70px;text-align:center;">LINK</div>
                 </div>
                 <sc-for list="{{ selOfficers }}" as="o" hint-placeholder-count="3">
                   <div style="display:grid;grid-template-columns:1.5fr auto auto auto auto auto;align-items:center;padding:12px 20px;border-bottom:1px solid #EEEEEE;">
@@ -328,7 +328,10 @@
                     <div style="width:64px;text-align:right;font-size:12.5px;font-weight:600;color:#262626;font-family:'Geist Mono',monospace;">{{ o.rateLabel }}</div>
                     <div style="width:96px;display:flex;justify-content:center;"><button onClick="{{ o.confirmToggle }}" style="{{ o.confirmStyle }}">{{ o.confirmLabel }}</button></div>
                     <div style="width:110px;display:flex;justify-content:center;"><button onClick="{{ o.onDutyToggle }}" style="{{ o.onDutyStyle }}">{{ o.onDutyLabel }}</button></div>
-                    <div style="width:34px;display:flex;justify-content:center;"><button onClick="{{ o.remove }}" title="Remove" style="width:28px;height:28px;border-radius:4px;border:1px solid #F4F4F4;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#FFF1F0;color:#FF3B30;border-color:#FFDEDB;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg></button></div>
+                    <div style="width:70px;display:flex;justify-content:center;gap:5px;">
+                      <button onClick="{{ o.copyLink }}" title="Copy this officer's duty link (check-in / check-out / photo upload)" style="width:28px;height:28px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#525252;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#F4F4F4;color:#0A0A0A;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"></path><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path></svg></button>
+                      <button onClick="{{ o.remove }}" title="Remove" style="width:28px;height:28px;border-radius:4px;border:1px solid #F4F4F4;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#FFF1F0;color:#FF3B30;border-color:#FFDEDB;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg></button>
+                    </div>
                   </div>
                 </sc-for>
                 <div style="display:flex;align-items:center;gap:9px;padding:14px 20px;background:#FAFAFA;">
@@ -352,8 +355,11 @@
                     <div style="{{ p.dotStyle }}"></div>
                     <div style="width:56px;font-size:13px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ p.time }}</div>
                     <div style="flex:1;font-size:12.5px;color:#525252;">{{ p.receivedLabel }}</div>
+                    <sc-if value="{{ p.isReceived }}" hint-placeholder-val="{{ false }}">
+                      <span onClick="{{ p.openPhoto }}" title="View all evidence uploaded for this time" style="font-size:12.5px;font-weight:600;color:#0A0A0A;text-decoration:underline;text-underline-offset:2px;cursor:pointer;">{{ p.viewLabel }}</span>
+                    </sc-if>
                     <span style="{{ p.pill.style }}">{{ p.pill.label }}</span>
-                    <sc-if value="{{ p.canMark }}" hint-placeholder-val="{{ false }}"><button onClick="{{ p.upload }}" title="Upload a photo on behalf of the officer" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.6"></path></svg> Add photo</button></sc-if>
+                    <sc-if value="{{ p.canMark }}" hint-placeholder-val="{{ false }}"><label title="Upload a photo on behalf of the officer" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.6"></path></svg> Add photo<input type="file" accept="image/*" onChange="{{ p.attach }}" style="display:none;"></label></sc-if>
                     <sc-if value="{{ p.canMark }}" hint-placeholder-val="{{ false }}"><button onClick="{{ p.mark }}" style="padding:6px 11px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;border-color:#0A0A0A;color:#0A0A0A;">Mark received</button></sc-if>
                   </div>
                 </sc-for>
@@ -401,6 +407,23 @@
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><span style="font-size:13.5px;font-weight:700;color:#0A0A0A;">Billing</span><span style="{{ sel.billPill.style }}">{{ sel.billPill.label }}</span></div>
                 <sc-if value="{{ sel.canComplete }}" hint-placeholder-val="{{ false }}"><button onClick="{{ completeSel }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border:none;border-radius:6px;background:#0A0A0A;color:#fff;font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:9px;" style-hover="background:#262626;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg> Complete job</button></sc-if>
                 <sc-if value="{{ sel.completeDisabledReason }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#8A5A00;background:#FFF4D6;border-radius:4px;padding:8px 11px;margin-bottom:9px;text-align:center;">{{ sel.completeDisabledReason }}</div></sc-if>
+                <sc-if value="{{ sel.isAwaitingSign }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #E5E5E5;border-radius:6px;padding:13px;margin-bottom:10px;background:#FAFAFA;">
+                    <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg><span style="font-size:12.5px;font-weight:700;color:#0A0A0A;">Site manager signature</span><span style="margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.04em;color:#6B3FA0;background:#F3EEFB;padding:2px 7px;border-radius:999px;">PENDING</span></div>
+                    <div style="font-size:11px;color:#A3A3A3;margin-bottom:10px;">Job is finished — share this link with the site manager to capture their sign-off. The status stays <b>Awaiting Signature</b> until they sign.</div>
+                    <div style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;padding:8px 10px;margin-bottom:9px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"></path><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path></svg><div style="flex:1;min-width:0;font-family:'Geist Mono',monospace;font-size:11.5px;color:#262626;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ sel.signLink }}</div></div>
+                    <div style="display:flex;gap:8px;margin-bottom:9px;">
+                      <button onClick="{{ copySignLink }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy link</button>
+                      <button onClick="{{ copySignMsg }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-9A8.5 8.5 0 1 1 21 11.5Z"></path></svg> Copy message</button>
+                    </div>
+                    <button onClick="{{ markSignedSel }}" title="Simulate the site manager signing the link" style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;border:none;border-radius:6px;background:#0A7A3B;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;" style-hover="background:#086A33;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg> Mark signature received</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ sel.isCompleted }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #CDE9D5;border-radius:6px;padding:12px 13px;margin-bottom:10px;background:#E8F5EC;">
+                    <div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A7A3B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="m9 11 3 3L22 4"></path></svg><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#0A5A2C;">Signed off by site manager</div><div style="font-size:11px;color:#0A7A3B;">{{ sel.signedByLabel }} · {{ sel.signedDateLabel }} — Job Report available above.</div></div></div>
+                  </div>
+                </sc-if>
                 <button onClick="{{ cancelSel }}" style="width:100%;padding:10px;border:1px solid #FFDEDB;border-radius:6px;background:#fff;color:#B31D15;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#FFF1F0;">Cancel job…</button>
               </div>
             </div>
@@ -927,6 +950,16 @@
           <div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Assignment · {{ officerDetail.jobId }}</div>
           <div style="font-size:13px;color:#262626;margin-bottom:16px;">{{ officerDetail.jobCustomer }} · {{ officerDetail.jobLocation }} · {{ officerDetail.jobDate }}</div>
 
+          <div style="border:1px solid #E5E5E5;border-radius:6px;padding:13px;margin-bottom:16px;background:#FAFAFA;">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"></path><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path></svg><span style="font-size:12.5px;font-weight:700;color:#0A0A0A;">Personal duty link</span></div>
+            <div style="font-size:11px;color:#A3A3A3;margin-bottom:10px;">Send this to the officer — they use it to check in, check out and upload their hourly proof photos.</div>
+            <div style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;padding:8px 10px;margin-bottom:9px;"><div style="flex:1;min-width:0;font-family:'Geist Mono',monospace;font-size:11.5px;color:#262626;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ officerDetail.dutyLink }}</div></div>
+            <div style="display:flex;gap:8px;">
+              <button onClick="{{ officerDetail.copyDutyLink }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy link</button>
+              <button onClick="{{ officerDetail.copyDutyMsg }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-9A8.5 8.5 0 1 1 21 11.5Z"></path></svg> Copy message</button>
+            </div>
+          </div>
+
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#E5E5E5;border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;margin-bottom:12px;">
             <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">CHECK-IN</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.checkIn }}</div></div>
             <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">CHECK-OUT</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.checkOut }}</div></div>
@@ -1125,6 +1158,30 @@
     </div>
   </sc-if>
 
+  <!-- Proof photos for a checkpoint (all evidence uploaded for this time) -->
+  <sc-if value="{{ photoViewOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:96;display:flex;align-items:center;justify-content:center;padding:24px;animation:pnfade .15s ease;">
+      <div style="background:#fff;border-radius:8px;width:640px;max-width:100%;max-height:92vh;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;gap:9px;padding:15px 20px;border-bottom:1px solid #E5E5E5;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+          <div style="flex:1;min-width:0;"><div style="font-size:14.5px;font-weight:700;color:#0A0A0A;">Evidence photos · {{ photoView.time }}</div><div style="font-size:11.5px;color:#A3A3A3;">{{ photoView.countLabel }} uploaded for this checkpoint</div></div>
+          <button onClick="{{ closePhotoView }}" style="width:30px;height:30px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#EEEEEE;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+        <div style="padding:18px 20px;overflow:auto;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <sc-for list="{{ photoView.images }}" as="ph" hint-placeholder-count="2">
+              <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
+                <sc-if value="{{ ph.hasSrc }}" hint-placeholder-val="{{ false }}"><div style="height:130px;background:#000;"><img src="{{ ph.src }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div></sc-if>
+                <sc-if value="{{ ph.noSrc }}" hint-placeholder-val="{{ true }}"><div style="height:130px;"><image-slot id="{{ ph.slotId }}" shape="rect" placeholder="proof photo"></image-slot></div></sc-if>
+                <div style="padding:8px 10px;border-top:1px solid #E5E5E5;"><div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;"><span style="font-size:12px;font-weight:600;color:#0A0A0A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ph.by }}</span><sc-if value="{{ ph.manual }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;font-weight:700;letter-spacing:0.04em;color:#8A5A00;background:#FFF4D6;padding:1px 5px;border-radius:3px;">ADMIN</span></sc-if></div><div style="font-size:10.5px;color:#A3A3A3;">{{ ph.stampLabel }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- toast -->
   <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0A0A0A;color:#fff;padding:11px 18px;border-radius:6px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.18);display:flex;align-items:center;gap:9px;z-index:100;animation:pntoast .2s ease;">
@@ -1143,6 +1200,7 @@ class Component extends DCLogic {
     'Waiting for Officers':{bg:'#FFF4D6',fg:'#8A5A00',dot:'#8A5A00'},
     'Confirmed':{bg:'#E8EEF9',fg:'#1F4FA3',dot:'#1F4FA3'},
     'Ongoing':{bg:'#E8EEF9',fg:'#1F4FA3',dot:'#1F4FA3'},
+    'Awaiting Signature':{bg:'#F3EEFB',fg:'#6B3FA0',dot:'#8B5CF6'},
     'Completed':{bg:'#E8F5EC',fg:'#0A7A3B',dot:'#0A7A3B'},
     'Cancelled':{bg:'#FFF1F0',fg:'#B31D15',dot:'#FF3B30'},
   };
@@ -1152,7 +1210,7 @@ class Component extends DCLogic {
     screen:'dashboard', jobId:'PN-2041', jobTab:'overview', toast:null, addPick:'', jobFilter:'All', summaryJobId:'PN-2044', summaryDetail:false, reportType:'Completed job report',
     createOpen:false, form:{customer:'',location:'',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''},
     officerOpen:false, officerEditId:null, officerMenuId:null, oform:{name:'',phone:'',rate:'16',ic:false,status:'New',notes:''},
-    reportOpen:false, officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null,
+    reportOpen:false, officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}, photoView:null, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null,
     profileMenuOpen:false,
     admin:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233', role:'Operations Admin', team:'PilotNow Security Ops', company:'PilotNow Security Pte Ltd', memberSince:'Jan 2025', pwChanged:'1 month ago' },
     pform:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233' },
@@ -1269,6 +1327,9 @@ class Component extends DCLogic {
 
   hrs(a,b){ if(!a||!b) return 0; const [h1,m1]=a.split(':').map(Number); const [h2,m2]=b.split(':').map(Number); let d=(h2*60+m2)-(h1*60+m1); if(d<0)d+=1440; return Math.round(d/60*100)/100; }
   money(n){ return 'S$'+n.toLocaleString('en-SG',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  linkToken(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return ('000000'+h.toString(36).toUpperCase()).slice(-6); }
+  dutyLinkFor(job,o){ return 'https://duty.pilotnow.sg/o/'+job.id+'-'+o.oid+'?t='+this.linkToken(job.id+'-'+o.oid); }
+  dutyMsgFor(job,o){ return 'Hi '+o.name+', here is your PilotNow duty link for Job '+job.id+' — '+job.customer+', '+job.location+' on '+this.dLabel(job.date)+' ('+job.start+'–'+job.end+').\nUse it to check in, check out and upload your hourly proof photos:\n'+this.dutyLinkFor(job,o)+'\n– PilotNow Ops'; }
   dLabel(d){ const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const p=d.split('-'); return p[2]+' '+M[+p[1]-1]+' '+p[0]; }
   pillOf(status){ const m=this.SM[status]||this.SM['Draft']; return {label:status, style:`display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;line-height:1.5;background:${m.bg};color:${m.fg};white-space:nowrap;`, dotStyle:`width:6px;height:6px;border-radius:50%;background:${m.dot};flex:0 0 6px;`}; }
 
@@ -1295,7 +1356,8 @@ class Component extends DCLogic {
   uploadPhoto(id,i){ this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,status:'received',at:p.time,by:'Admin (on behalf of officer)'}:p); return j; }); this.toastMsg('Photo added on behalf of the officer'); }
   markPhotoMissing(id,i){ this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,status:'missing',at:'',by:''}:p); return j; }); this.toastMsg('Checkpoint marked as missing'); }
   addPhotoNote(id,i){ const cur=(this.state.jobs.find(j=>j.id===id).photos[i].note)||''; const note=window.prompt('Admin note for this checkpoint:',cur); if(note===null) return; this._mutJob(id,j=>{ j.photos=j.photos.map((p,k)=> k===i?{...p,note:note.trim()}:p); return j; }); this.toastMsg(note.trim()?'Note saved':'Note cleared'); }
-  completeJob(id){ const job=this.state.jobs.find(j=>j.id===id); if(!job.officers.length){ this.toastMsg('Add at least one officer before completing'); return; } this._mutJob(id,j=>{ j.status='Completed'; j.officers=j.officers.map(o=>({...o, actualStart:o.actualStart||j.start, actualEnd:o.actualEnd||j.end})); return j; }); this.toastMsg('Job marked as completed'); }
+  completeJob(id){ const job=this.state.jobs.find(j=>j.id===id); if(!job.officers.length){ this.toastMsg('Add at least one officer before completing'); return; } this._mutJob(id,j=>{ j.status='Awaiting Signature'; j.signed=false; j.officers=j.officers.map(o=>({...o, actualStart:o.actualStart||j.start, actualEnd:o.actualEnd||j.end})); return j; }); this.toastMsg('Job finished — awaiting site manager signature'); }
+  markSigned(id){ const job=this.state.jobs.find(j=>j.id===id); if(!job) return; if(job.status!=='Awaiting Signature'){ this.toastMsg('Complete the job first'); return; } this._mutJob(id,j=>{ j.status='Completed'; j.signed=true; j.signedBy=j.customer; j.signedDate=this.TODAY; return j; }); this.toastMsg('Signature received — job Completed. Job Report is now available'); }
   cancelJob(id){ this._mutJob(id,j=>{ j.status='Cancelled'; j.cancelReason=j.cancelReason||'Cancelled by admin'; return j; }); this.toastMsg('Job cancelled'); }
   openOfficer(){ this.setState({officerOpen:true, officerEditId:null, oform:{name:'',phone:'+65 ',rate:'16',ic:false,status:'New',notes:''}}); }
   editOfficer(id){ const o=this.state.officers.find(x=>x.id===id); if(!o) return; this.setState({officerOpen:true, officerEditId:id, officerMenuId:null, officerProfileId:null, oform:{name:o.name,phone:o.phone,rate:String(o.rate),ic:!!o.ic,status:o.status,notes:(o.notes||'')}}); }
@@ -1324,6 +1386,10 @@ class Component extends DCLogic {
   savePassword(){ const f=this.state.pwForm; if(!f.current){ this.toastMsg('Enter your current password'); return; } if((f.next||'').length<8){ this.toastMsg('New password must be at least 8 characters'); return; } if(f.next!==f.confirm){ this.toastMsg('New passwords do not match'); return; } this.setState(s=>({admin:{...s.admin,pwChanged:'just now'}, pwOpen:false, pwForm:{current:'',next:'',confirm:''}})); this.toastMsg('Password updated'); }
   logout(){ this.setState({profileMenuOpen:false}); this.toastMsg('You have been logged out (demo)'); }
   openReport(){ this.setState({reportOpen:true}); }
+  openPhotoView(pv){ this.setState({photoView:{time:pv.time, images:pv.images||[], idx:pv.idx||0}}); }
+  closePhotoView(){ this.setState({photoView:null}); }
+  photoStep(d){ this.setState(s=>{ const pv=s.photoView; if(!pv||!pv.images.length) return {}; const n=pv.images.length; return {photoView:{...pv, idx:((pv.idx+d)%n+n)%n}}; }); }
+  attachCheckpointPhoto(jobId,i,e){ const file=e&&e.target&&e.target.files&&e.target.files[0]; if(!file){ return; } if(!/^image\//.test(file.type)){ this.toastMsg('Please choose an image file'); return; } const rd=new FileReader(); rd.onload=()=>{ this._mutJob(jobId,j=>{ const ph={...j.photos[i]}; const time=ph.time; const cur=(ph.images&&ph.images.length)?ph.images.slice():(ph.status==='received'?[{src:ph.src||'',by:ph.by||'Officer',at:ph.at||time,dateStamp:ph.dateStamp,manual:!!ph.manual}]:[]); cur.push({src:rd.result,by:'Admin (on behalf of officer)',at:time,dateStamp:this.dLabel(j.date),manual:true}); ph.images=cur; ph.status='received'; ph.by=ph.by||'Admin (on behalf of officer)'; ph.at=ph.at||time; ph.src=ph.src||rd.result; j.photos=j.photos.map((x,k)=>k===i?ph:x); return j; }); this.toastMsg('Photo added to '+this.state.jobs.find(j=>j.id===jobId).photos[i].time+' checkpoint'); }; rd.readAsDataURL(file); }
   openOfficerDetail(oid){ this.setState({officerDetailOid:oid, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
   closeOfficerDetail(){ this.setState({officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
   openOfficerProfile(id){ this.setState({officerProfileId:id}); }
@@ -1392,9 +1458,9 @@ class Component extends DCLogic {
 
     // ---- Jobs list with filter ----
     const jf=S.jobFilter||'All';
-    const jobFilters=['All','Draft','Waiting for Officers','Confirmed','Ongoing','Completed','Cancelled'];
+    const jobFilters=['All','Draft','Waiting for Officers','Confirmed','Ongoing','Awaiting Signature','Completed','Cancelled'];
     const filterTabs=jobFilters.map(f=>({label:f, active:jf===f, count: f==='All'?jobs.length:jobs.filter(j=>j.status===f).length, set:()=>this.setState({jobFilter:f}), style: jf===f?'padding:7px 13px;border-radius:4px;border:none;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;':'padding:7px 13px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#525252;font-size:12.5px;font-weight:600;cursor:pointer;'}));
-    const jobStatusOrder={'Waiting for Officers':0,'Posted to WhatsApp':1,'Ongoing':2,'Completed':3,'Confirmed':4,'Cancelled':5,'Draft':6};
+    const jobStatusOrder={'Waiting for Officers':0,'Posted to WhatsApp':1,'Ongoing':2,'Awaiting Signature':3,'Completed':4,'Confirmed':5,'Cancelled':6,'Draft':7};
     const jobsFiltered=(jf==='All'?jobs.slice():jobs.filter(j=>j.status===jf)).sort((a,b)=>(jobStatusOrder[a.status]??9)-(jobStatusOrder[b.status]??9)).map(enrich);
 
     // ---- Officer Management ----
@@ -1429,7 +1495,8 @@ class Component extends DCLogic {
       confirmLabel:o.confirmed?'Confirmed':'Confirm',
       onDutyStyle: o.onDuty?'display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:4px;border:none;font-size:11.5px;font-weight:600;cursor:pointer;background:#E8EEF9;color:#1F4FA3;':'display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:4px;border:1px solid #E5E5E5;font-size:11.5px;font-weight:600;cursor:pointer;background:#fff;color:#525252;',
       onDutyLabel:o.onDuty?'On duty':'Mark on duty',
-      confirmToggle:()=>this.toggleConfirm(sel.id,o.oid), onDutyToggle:()=>this.toggleOnDuty(sel.id,o.oid), remove:()=>this.removeOfficer(sel.id,o.oid), openDetail:()=>this.openOfficerDetail(o.oid) }; });
+      confirmToggle:()=>this.toggleConfirm(sel.id,o.oid), onDutyToggle:()=>this.toggleOnDuty(sel.id,o.oid), remove:()=>this.removeOfficer(sel.id,o.oid), openDetail:()=>this.openOfficerDetail(o.oid),
+      dutyLink:this.dutyLinkFor(sel,o), copyLink:()=>this.copy(this.dutyMsgFor(sel,o),'Duty link copied — '+o.name) }; });
     const selTotalPay=selOfficers.reduce((a,o)=>a+o.pay,0);
     const confirmedCount=sel.officers.filter(o=>o.confirmed).length;
     const onDutyCount=sel.officers.filter(o=>o.onDuty).length;
@@ -1442,6 +1509,7 @@ class Component extends DCLogic {
         confirmPill: o.confirmed?smallPill('#E8F5EC','#0A7A3B','Confirmed'):smallPill('#FAFAFA','#525252','Not confirmed'),
         dutyPill: o.onDuty?smallPill('#E8EEF9','#1F4FA3','On duty'):smallPill('#FAFAFA','#525252','Off duty'),
         dutyState, checkIn:o.actualStart||'—', checkOut:o.actualEnd||'—', workedLabel:worked?worked.toFixed(2)+'h':'—', rateLabel:this.money(o.rate)+'/h', payLabel:this.money(pay),
+        dutyLink:this.dutyLinkFor(sel,o), copyDutyLink:()=>this.copy(this.dutyLinkFor(sel,o),'Duty link copied — '+o.name), copyDutyMsg:()=>this.copy(this.dutyMsgFor(sel,o),'Duty message copied — '+o.name),
         scheduledLabel:sel.start+'–'+sel.end, jobId:sel.id, jobCustomer:sel.customer, jobLocation:sel.location, jobDate:this.dLabel(sel.date),
         photos:myPhotos.map((p,pi)=>({time:p.time, at:p.at||p.time, dateStamp:p.dateStamp||this.dLabel(sel.date), manual:!!p.manual, stampLabel:(p.dateStamp||this.dLabel(sel.date))+' · '+(p.at||p.time), src:p.src||'', hasSrc:!!p.src, noSrc:!p.src, slotId:'odph-'+sel.id+'-'+o.oid+'-'+(p.uid||(p.time.replace(':','')+'-'+pi))})), photoCount:myPhotos.length, hasPhotos:myPhotos.length>0, noPhotos:myPhotos.length===0,
         expectedCount:sel.photos.length, close:()=>this.closeOfficerDetail(), canAddPhoto:!isCancelled,
@@ -1449,8 +1517,8 @@ class Component extends DCLogic {
         openPhotoForm:()=>this.openPhotoForm(sel.id), savePhoto:()=>this.saveOfficerPhoto(sel.id,o.oid), cancelPhoto:()=>this.cancelPhotoForm(), clearPhoto:()=>this.clearPhotoPick(),
         opf:{ date:(e)=>this.setOPF('date',e.target.value), time:(e)=>this.setOPF('time',e.target.value), photo:(e)=>this.pickPhoto(e) },
         copyWa:()=>this.copy('Hi '+o.name+', regarding Job '+sel.id+' at '+sel.location+' — ','WhatsApp message copied') }; } }
-    const stepDefs=[['Draft','Draft created'],['posted','Posted / Waiting'],['Confirmed','Officers confirmed'],['Ongoing','Job ongoing'],['Completed','Completed']];
-    const statusIdx={'Draft':0,'Posted to WhatsApp':1,'Waiting for Officers':1,'Confirmed':2,'Ongoing':3,'Completed':4}[sel.status];
+    const stepDefs=[['Draft','Draft created'],['posted','Posted / Waiting'],['Confirmed','Officers confirmed'],['Ongoing','Job ongoing'],['Awaiting Signature','Awaiting sign-off'],['Completed','Completed']];
+    const statusIdx={'Draft':0,'Posted to WhatsApp':1,'Waiting for Officers':1,'Confirmed':2,'Ongoing':3,'Awaiting Signature':4,'Completed':5}[sel.status];
     const selSteps=stepDefs.map((d,i)=>{ const st= isCancelled?'cancel': i<statusIdx?'done': i===statusIdx?'current':'todo'; const c= st==='done'?{dot:'#0A7A3B',ring:'#0A7A3B',bg:'#0A7A3B',tx:'#0A0A0A'}: st==='current'?{dot:'#0A0A0A',ring:'#0A0A0A',bg:'#0A0A0A',tx:'#0A0A0A'}: st==='cancel'?{dot:'#FF3B30',ring:'#FF3B30',bg:'#FF3B30',tx:'#A3A3A3'}:{dot:'#fff',ring:'#D4D4D4',bg:'#fff',tx:'#A3A3A3'}; return {label:d[1], last:i===stepDefs.length-1,
       dotStyle:`width:26px;height:26px;border-radius:50%;flex:0 0 26px;display:flex;align-items:center;justify-content:center;background:${st==='todo'?'#fff':c.bg};border:2px solid ${c.ring};color:#fff;z-index:1;`,
       lineStyle:`flex:1;height:2px;background:${i<statusIdx&&!isCancelled?'#0A7A3B':'#E5E5E5'};`,
@@ -1458,13 +1526,26 @@ class Component extends DCLogic {
       showCheck:st==='done', showDot:st!=='done'}; });
     const jobMsg='🛡️ *PilotNow Job '+sel.id+'*\n📍 '+sel.location+'\n📅 '+this.dLabel(sel.date)+', '+sel.start+'–'+sel.end+'\n👮 '+sel.required+' officers needed\nRate: '+this.money(sel.officers[0]?sel.officers[0].rate:16)+'/h\n\n'+sel.description+'\n\nReply *IN* to volunteer.';
     const reminderMsg='⏰ Reminder — Job '+sel.id+' at '+sel.location+' starts today '+sel.start+'. Please send your hourly proof photo every hour to this group. – PilotNow Ops';
-    const selPhotos=sel.photos.map((p,i)=>{ const meta= p.status==='received'?{bg:'#E8F5EC',fg:'#0A7A3B',label:'Received',dot:'#0A7A3B'}: p.status==='missing'?{bg:'#FFF1F0',fg:'#B31D15',label:'Missing',dot:'#FF3B30'}:{bg:'#FAFAFA',fg:'#525252',label:'Upcoming',dot:'#A3A3A3'}; return {...p, meta, pill:smallPill(meta.bg,meta.fg,meta.label), dotStyle:`width:9px;height:9px;border-radius:50%;background:${meta.dot};flex:0 0 9px;`, canMark:p.status!=='received', receivedLabel:p.status==='received'?('by '+p.by+' · '+p.at):(p.status==='missing'?'No photo received':'Not due yet'), mark:()=>this.markPhoto(sel.id,i), upload:()=>this.uploadPhoto(sel.id,i) }; });
+    const selPhotos=sel.photos.map((p,i)=>{ const meta= p.status==='received'?{bg:'#E8F5EC',fg:'#0A7A3B',label:'Received',dot:'#0A7A3B'}: p.status==='missing'?{bg:'#FFF1F0',fg:'#B31D15',label:'Missing',dot:'#FF3B30'}:{bg:'#FAFAFA',fg:'#525252',label:'Upcoming',dot:'#A3A3A3'}; const isReceived=p.status==='received'; const dateStamp=p.dateStamp||this.dLabel(sel.date);
+      const imgs=(p.images&&p.images.length)?p.images:(isReceived?[{src:p.src||'',by:p.by||'Officer',at:p.at||p.time,dateStamp:dateStamp,manual:!!p.manual}]:[]);
+      const gallery=imgs.map((im,k)=>({src:im.src||'', hasSrc:!!im.src, noSrc:!im.src, by:im.by||'Officer', at:im.at||p.time, dateStamp:im.dateStamp||dateStamp, manual:!!im.manual, slotId:'ppview-'+sel.id+'-'+i+'-'+k, filmSlot:'ppfilm-'+sel.id+'-'+i+'-'+k}));
+      const photoCount=gallery.length; const byLabel= photoCount>1?(photoCount+' photos received'):('by '+(p.by||'Officer')+' · '+(p.at||p.time));
+      return {...p, meta, pill:smallPill(meta.bg,meta.fg,meta.label), dotStyle:`width:9px;height:9px;border-radius:50%;background:${meta.dot};flex:0 0 9px;`, canMark:p.status!=='received'&&!isCompleted&&!isCancelled, isReceived, canAddMore:isReceived&&!isCompleted&&!isCancelled, photoCount, viewLabel:photoCount>1?('View '+photoCount+' photos'):'View photo', receivedLabel:p.status==='received'?byLabel:(p.status==='missing'?'No photo received':'Not due yet'), openPhoto:()=>this.openPhotoView({time:p.time, images:gallery, idx:0}), mark:()=>this.markPhoto(sel.id,i), upload:()=>this.uploadPhoto(sel.id,i), attach:(e)=>this.attachCheckpointPhoto(sel.id,i,e) }; });
     const selPhotosReceived=sel.photos.filter(p=>p.status==='received').length;
     const addOptions=[{value:'',label:'Add participating officer…'}].concat(S.officers.filter(o=>o.status!=='Blocked'&&!sel.officers.some(x=>x.oid===o.id)).map(o=>({value:o.id,label:o.name+' · '+this.money(o.rate)+'/h'+(o.ic?'':' · no IC')})));
-    const selView={...sel, pill:this.pillOf(sel.status), billPill:billPill(sel.billing), dateLabel:this.dLabel(sel.date), timeLabel:sel.start+'–'+sel.end, schedHoursLabel:schedHours+'h scheduled', isCancelled, isCompleted,
+    const signLink='https://sign.pilotnow.sg/j/'+sel.id+'?t='+this.linkToken(sel.id);
+    const signMsg='Hi, kindly review and sign off PilotNow Job '+sel.id+' — '+sel.customer+', '+this.dLabel(sel.date)+'.\nSign here: '+signLink+'\nThank you. – PilotNow Ops';
+    const isAwaitingSign=sel.status==='Awaiting Signature';
+    const reportEnabled=isCompleted;
+    const reportBtnBase='display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:none;border-radius:4px;font-size:12.5px;font-weight:600;';
+    const selView={...sel, pill:this.pillOf(sel.status), billPill:billPill(sel.billing), dateLabel:this.dLabel(sel.date), timeLabel:sel.start+'–'+sel.end, schedHoursLabel:schedHours+'h scheduled', isCancelled, isCompleted, isAwaitingSign,
       canPost:!sel.posted, postedLabel:sel.posted?'Posted to WhatsApp group':'Not yet posted',
-      canComplete: !isCompleted && !isCancelled && sel.officers.length>0,
-      completeDisabledReason: sel.officers.length===0?'Add at least one participating officer first':'',
+      canComplete: !isCompleted && !isCancelled && !isAwaitingSign && sel.officers.length>0,
+      completeDisabledReason: (!isCompleted && !isCancelled && !isAwaitingSign && sel.officers.length===0)?'Add at least one participating officer first':'',
+      signLink, signMsg, reportEnabled,
+      reportBtnStyle: reportBtnBase+(reportEnabled?'background:#0A0A0A;color:#fff;cursor:pointer;':'background:#F4F4F4;color:#A3A3A3;cursor:not-allowed;'),
+      reportHint: reportEnabled?'Open the signed job report':'Job Report unlocks after the site manager signs off',
+      signedByLabel: sel.signedBy||sel.customer, signedDateLabel: sel.signedDate?this.dLabel(sel.signedDate):this.dLabel(this.TODAY),
       totalPayLabel:this.money(selTotalPay), confirmedLabel:confirmedCount+'/'+sel.officers.length, onDutyLabel:onDutyCount+'/'+sel.officers.length, stillNeeded, requiredLabel:sel.officers.length+' of '+sel.required };
 
     // ---- Job Report (all info + evidence photos grouped by officer) ----
@@ -1578,9 +1659,12 @@ class Component extends DCLogic {
       sel:selView, selOfficers, selSteps, selPhotos, selPhotosReceived, jobMsg, reminderMsg, addOptions,
       postWA:()=>this.postWhatsApp(sel.id), copyJobMsg:()=>this.copy(jobMsg,'Job message copied for WhatsApp'), copyReminder:()=>this.copy(reminderMsg,'Reminder copied for WhatsApp'),
       completeSel:()=>this.completeJob(sel.id), cancelSel:()=>this.cancelJob(sel.id), editSel:()=>this.toastMsg('Edit mode (demo)'),
+      copySignLink:()=>this.copy(signLink,'Signature link copied'), copySignMsg:()=>this.copy(signMsg,'Signature request copied'),
+      markSignedSel:()=>this.markSigned(sel.id), reportClick:()=> sel.status==='Completed'? this.openReport() : this.toastMsg('Job Report unlocks after the site manager signs off'),
       requestOpen:S.requestOpen, rform:S.rform, openRequest:()=>this.openRequest(), closeRequest:()=>this.closeRequest(), saveRequest:()=>this.saveRequest(),
       rf:{ customer:(e)=>this.setRF('customer',e.target.value), method:(e)=>this.setRF('method',e.target.value), location:(e)=>this.setRF('location',e.target.value), jobDate:(e)=>this.setRF('jobDate',e.target.value), start:(e)=>this.setRF('start',e.target.value), end:(e)=>this.setRF('end',e.target.value), officers:(e)=>this.setRF('officers',e.target.value), notes:(e)=>this.setRF('notes',e.target.value) },
       methodOptions:['WhatsApp','Email'].map(m=>({value:m,label:m})),
+      photoViewOpen:!!S.photoView, photoView:(()=>{ const pv=S.photoView; if(!pv||!pv.images.length) return {images:[]}; return {time:pv.time, count:pv.images.length, countLabel:pv.images.length+(pv.images.length>1?' photos':' photo'), images:pv.images.map(im=>({...im, stampLabel:(im.dateStamp||'')+' · '+(im.at||'')})) }; })(), closePhotoView:()=>this.closePhotoView(),
       reportOpen:S.reportOpen, reportView, officerDetailOpen:!!officerDetailView, officerDetail:officerDetailView||{photos:[]}, officerProfileOpen:!!officerProfileView, officerProfile:officerProfileView||{history:[]}, openReport:()=>this.openReport(), closeReport:()=>this.closeReport(), printReport:()=>this.printReport(), copyReport:()=>this.copy('PilotNow Job Report — '+sel.id+' — '+sel.customer+' — '+this.dLabel(sel.date)+' — '+selPhotosReceived+' evidence photos — total payable '+this.money(selTotalPay),'Job report copied'),
       addPick:S.addPick, onAddPick:(e)=>this.setState({addPick:e.target.value}), doAddOfficer:()=>this.addOfficer(sel.id),
       backToJobs:()=>this.setState({screen:'jobs'}),
