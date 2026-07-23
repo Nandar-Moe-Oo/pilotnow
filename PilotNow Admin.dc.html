@@ -524,6 +524,20 @@
         <sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
         <div style="animation:pnfade .25s ease;">
           <div style="font-size:13px;color:#525252;margin-bottom:14px;">Completed jobs and their customer billing status.</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;padding:7px 11px;min-width:260px;flex:1;max-width:380px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input value="{{ billQuery }}" onInput="{{ onBillQuery }}" placeholder="Search customer name" style="border:none;outline:none;background:transparent;font-size:12.5px;color:#0A0A0A;width:100%;">
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;padding:6px 10px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">JOB DATE</span>
+              <input type="date" value="{{ billDate }}" onInput="{{ onBillDate }}" style="border:none;outline:none;background:transparent;font-size:12.5px;color:#0A0A0A;font-family:'Geist Mono',monospace;">
+            </div>
+            <sc-if value="{{ billHasFilters }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearBillFilters }}" style="padding:6px 10px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#525252;font-size:12px;font-weight:600;cursor:pointer;">Clear filters</button></sc-if>
+            <div style="flex:1;"></div>
+            <div style="font-size:12px;color:#A3A3A3;">Showing <span style="font-family:'Geist Mono',monospace;font-weight:700;color:#0A0A0A;">{{ billFilteredCount }}</span></div>
+          </div>
           <div style="background:#fff;border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
             <div style="display:grid;grid-template-columns:80px minmax(0,1.5fr) 92px 118px 84px 104px;font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:12px 20px;border-bottom:1px solid #E5E5E5;">
               <div>JOB</div><div>CUSTOMER</div><div>JOB DATE</div><div>INVOICE</div><div>BILLED</div><div style="text-align:right;">STATUS</div>
@@ -559,8 +573,18 @@
               <sc-for list="{{ reportCols }}" as="c" hint-placeholder-count="5"><div>{{ c.v }}</div></sc-for>
             </div>
             <sc-for list="{{ reportRowsView }}" as="row" hint-placeholder-count="5">
-              <div style="{{ reportColStyle }}padding:12px 20px;border-bottom:1px solid #EEEEEE;font-size:12.5px;color:#262626;">
-                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5"><div style="font-weight:500;">{{ cell.v }}</div></sc-for>
+              <div style="{{ reportColStyle }}align-items:center;padding:12px 20px;border-bottom:1px solid #EEEEEE;font-size:12.5px;color:#262626;">
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="6">
+                  <div style="font-weight:500;min-width:0;">
+                    <sc-if value="{{ cell.isAction }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ cell.open }}" title="View job report" style="display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;" style-hover="background:#F4F4F4;border-color:#D4D4D4;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M9 13h6M9 17h4"></path></svg>
+                        View
+                      </button>
+                    </sc-if>
+                    <sc-if value="{{ cell.isText }}" hint-placeholder-val="{{ true }}"><span>{{ cell.v }}</span></sc-if>
+                  </div>
+                </sc-for>
               </div>
             </sc-for>
             <div style="padding:13px 20px;background:#FAFAFA;font-size:12.5px;color:#262626;font-weight:600;">{{ reportTotal }}</div>
@@ -759,6 +783,7 @@
       <div id="job-report" style="background:#fff;width:780px;max-width:100%;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,0.16);overflow:hidden;">
         <div id="report-actions" style="display:flex;align-items:center;gap:9px;padding:14px 20px;border-bottom:1px solid #E5E5E5;background:#FAFAFA;">
           <div style="flex:1;font-size:13px;font-weight:600;color:#262626;">Job completion report</div>
+          <button onClick="{{ toggleReportEdit }}" style="{{ reportEditBtnStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> {{ reportEditLabel }}</button>
           <button onClick="{{ printReport }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6Z"></path></svg> Print / PDF</button>
           <button onClick="{{ copyReport }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy</button>
           <button onClick="{{ closeReport }}" style="width:34px;height:34px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#F4F4F4;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
@@ -833,7 +858,21 @@
           <!-- Proof of presence -->
           <div style="margin-top:26px;">
             <div style="display:flex;align-items:baseline;gap:8px;padding-bottom:8px;border-bottom:2px solid #0A0A0A;"><div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:#0A0A0A;letter-spacing:0.06em;">PROOF OF PRESENCE</div><div style="flex:1;"></div><span style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;letter-spacing:0.06em;">{{ reportView.proofSummary }}</span></div>
-            <sc-if value="{{ reportView.hasProof }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ reportEditing }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;border:1px solid #E5E5E5;border-radius:4px;overflow:hidden;">
+                <sc-for list="{{ reportView.proofEditRows }}" as="p" hint-placeholder-count="4">
+                  <div style="display:grid;grid-template-columns:78px 124px 104px 74px minmax(0,1fr) 118px;gap:10px;align-items:center;padding:11px 12px;border-bottom:1px solid #EEEEEE;background:#fff;">
+                    <input type="time" value="{{ p.time }}" onInput="{{ p.setTime }}" style="width:100%;padding:7px 8px;border:1px solid #E5E5E5;border-radius:4px;font-size:12px;color:#0A0A0A;font-family:'Geist Mono',monospace;outline:none;">
+                    <select value="{{ p.by }}" onChange="{{ p.setBy }}" style="width:100%;padding:7px 8px;border:1px solid #E5E5E5;border-radius:4px;font-size:12px;color:#0A0A0A;background:#fff;outline:none;"><sc-for list="{{ p.officerOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
+                    <select value="{{ p.status }}" onChange="{{ p.setStatus }}" style="width:100%;padding:7px 8px;border:1px solid #E5E5E5;border-radius:4px;font-size:12px;color:#0A0A0A;background:#fff;outline:none;"><option value="received">Received</option><option value="missing">Missing</option><option value="upcoming">Upcoming</option></select>
+                    <input type="time" value="{{ p.at }}" onInput="{{ p.setAt }}" style="width:100%;padding:7px 8px;border:1px solid #E5E5E5;border-radius:4px;font-size:12px;color:#0A0A0A;font-family:'Geist Mono',monospace;outline:none;">
+                    <input value="{{ p.note }}" onInput="{{ p.setNote }}" placeholder="Admin note" style="width:100%;padding:7px 8px;border:1px solid #E5E5E5;border-radius:4px;font-size:12px;color:#0A0A0A;outline:none;">
+                    <label style="display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 9px;border:1px solid #E5E5E5;border-radius:4px;background:#FAFAFA;color:#262626;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg> Photo<input type="file" accept="image/*" onChange="{{ p.attach }}" style="display:none;"></label>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ reportView.showProofTiles }}" hint-placeholder-val="{{ true }}">
               <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px;">
                 <sc-for list="{{ reportView.proofTiles }}" as="t" hint-placeholder-count="6">
                   <div style="position:relative;border:1px solid #E5E5E5;border-radius:2px;height:92px;background:linear-gradient(to top right, transparent calc(50% - 0.5px), #EDEDED calc(50% - 0.5px), #EDEDED calc(50% + 0.5px), transparent calc(50% + 0.5px)),linear-gradient(to bottom right, transparent calc(50% - 0.5px), #EDEDED calc(50% - 0.5px), #EDEDED calc(50% + 0.5px), transparent calc(50% + 0.5px));">
@@ -1104,7 +1143,7 @@ class Component extends DCLogic {
     screen:'dashboard', jobId:'PN-2041', jobTab:'overview', toast:null, addPick:'', jobFilter:'All', summaryJobId:'PN-2044', summaryDetail:false, reportType:'Completed job report',
     createOpen:false, form:{customer:'',location:'',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''},
     officerOpen:false, oform:{name:'',phone:'',rate:'16',ic:false,status:'New',notes:''},
-    reportOpen:false, officerDetailOid:null, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null,
+    reportOpen:false, reportEditing:false, officerDetailOid:null, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null, billQuery:'', billDate:'',
     profileMenuOpen:false,
     admin:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233', role:'Operations Admin', team:'PilotNow Security Ops', company:'PilotNow Security Pte Ltd', memberSince:'Jan 2025', pwChanged:'1 month ago' },
     pform:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233' },
@@ -1265,11 +1304,15 @@ class Component extends DCLogic {
   savePassword(){ const f=this.state.pwForm; if(!f.current){ this.toastMsg('Enter your current password'); return; } if((f.next||'').length<8){ this.toastMsg('New password must be at least 8 characters'); return; } if(f.next!==f.confirm){ this.toastMsg('New passwords do not match'); return; } this.setState(s=>({admin:{...s.admin,pwChanged:'just now'}, pwOpen:false, pwForm:{current:'',next:'',confirm:''}})); this.toastMsg('Password updated'); }
   logout(){ this.setState({profileMenuOpen:false}); this.toastMsg('You have been logged out (demo)'); }
   openReport(){ this.setState({reportOpen:true}); }
+  openJobReport(id){ this.setState({jobId:id, reportOpen:true}); }
+  toggleReportEdit(){ this.setState(s=>({reportEditing:!s.reportEditing})); }
+  updateReportProof(jobId,i,k,v){ this._mutJob(jobId,j=>{ j.photos=j.photos.map((p,idx)=>idx===i?{...p,[k]:v}:p); return j; }); }
+  attachReportProofPhoto(jobId,i,e){ const file=e&&e.target&&e.target.files&&e.target.files[0]; if(!file) return; if(!/^image\//.test(file.type)){ this.toastMsg('Please choose an image file'); return; } const rd=new FileReader(); rd.onload=()=>{ this._mutJob(jobId,j=>{ const ph={...j.photos[i]}; const time=ph.time||ph.at||j.start; const cur=(ph.images&&ph.images.length)?ph.images.slice():(ph.status==='received'?[{src:ph.src||'',by:ph.by||'Officer',at:ph.at||time,dateStamp:ph.dateStamp||this.dLabel(j.date),manual:!!ph.manual}]:[]); cur.push({src:rd.result,by:'Admin (report edit)',at:ph.at||time,dateStamp:this.dLabel(j.date),manual:true}); ph.images=cur; ph.status='received'; ph.by=ph.by||'Admin (report edit)'; ph.at=ph.at||time; ph.src=rd.result; ph.manual=true; j.photos=j.photos.map((x,k)=>k===i?ph:x); return j; }); this.toastMsg('Report proof photo updated'); }; rd.readAsDataURL(file); }
   openOfficerDetail(oid){ this.setState({officerDetailOid:oid}); }
   closeOfficerDetail(){ this.setState({officerDetailOid:null}); }
   openOfficerProfile(id){ this.setState({officerProfileId:id}); }
   closeOfficerProfile(){ this.setState({officerProfileId:null}); }
-  closeReport(){ this.setState({reportOpen:false}); }
+  closeReport(){ this.setState({reportOpen:false, reportEditing:false}); }
   printReport(){ try{ window.print(); }catch(e){} }
   markPaid(pid){ this.setState(s=>({payments:s.payments.map(p=>p.id===pid?{...p,status:'Paid',paidDate:this.TODAY}:p)})); this.toastMsg('Payment marked as paid'); }
   openPayHistory(name){ this.setState({payHistOfficer:name}); }
@@ -1406,6 +1449,7 @@ class Component extends DCLogic {
     const rNoun=(n,w)=>n+' '+w+(n===1?'':'s');
     const recPhotos=sel.photos.filter(p=>p.status==='received');
     const missPhotos=sel.photos.filter(p=>p.status==='missing');
+    const proofOfficerOptions=[{value:'',label:'Unassigned'}].concat(sel.officers.map(o=>({value:o.name,label:o.name}))).concat([{value:'Admin (report edit)',label:'Admin'}]);
     // proof tiles grouped by officer, in officer order
     const proofTiles=[]; let lateCount=0;
     sel.officers.forEach(o=>{ const arr=recPhotos.filter(p=>p.by===o.name).sort((a,b)=>a.time<b.time?-1:1); const ini=rInit(o.name);
@@ -1435,7 +1479,14 @@ class Component extends DCLogic {
       outcome: sel.status==='Completed'?'Closed · Signed': sel.status==='Cancelled'?'Cancelled': sel.status,
       outcomeSub: signed?('Signed off · '+sel.customer+' · 21:42 SGT'):('Status · '+sel.status),
       attendance, officerCountLabel:rNoun(sel.officers.length,'officer').toUpperCase(),
-      proofTiles, proofSummary:selPhotosReceived+' / '+sel.photos.length+' RECEIVED'+(lateCount?(' · '+lateCount+' LATE'):''), hasProof:proofTiles.length>0,
+      proofTiles, proofSummary:selPhotosReceived+' / '+sel.photos.length+' RECEIVED'+(lateCount?(' · '+lateCount+' LATE'):''), hasProof:proofTiles.length>0, showProofTiles:!S.reportEditing&&proofTiles.length>0,
+      proofEditRows:sel.photos.map((p,i)=>({i, time:p.time||'', by:p.by||'', status:p.status||'upcoming', at:p.at||'', note:p.note||'', officerOptions:proofOfficerOptions,
+        setTime:(e)=>this.updateReportProof(sel.id,i,'time',e.target.value),
+        setBy:(e)=>this.updateReportProof(sel.id,i,'by',e.target.value),
+        setStatus:(e)=>this.updateReportProof(sel.id,i,'status',e.target.value),
+        setAt:(e)=>this.updateReportProof(sel.id,i,'at',e.target.value),
+        setNote:(e)=>this.updateReportProof(sel.id,i,'note',e.target.value),
+        attach:(e)=>this.attachReportProofPhoto(sel.id,i,e) })),
       remarks:remarks.map(r=>({time:(r.time+'').toUpperCase()+' SGT', who:r.who, text:r.text})), remarksSummary:rNoun(remarks.length,'REMARK').toUpperCase()+' · 0 INCIDENTS', hasRemarks:remarks.length>0, noRemarks:remarks.length===0,
       signed, signManagerName:sel.customer, signManagerSub:this.dLabel(this.TODAY).toUpperCase()+' · 21:42 SGT · TOKEN ----'+rHash(sel.id+'m'),
       signOpsName:'Serene Lau', signOpsSub:this.dLabel(this.TODAY).toUpperCase()+' · 21:30 SGT · OPS LEAD',
@@ -1479,7 +1530,9 @@ class Component extends DCLogic {
         hasRows:mine.length>0, noRows:mine.length===0, close:()=>this.closePayHistory() }; }
 
     // ---- Billing ----
-    const billingView=completedJobs.map(j=>({id:j.id,customer:j.customer,dateLabel:this.dLabel(j.date),pill:billPill(j.billing),invoice:j.invoice||'—',billedDateLabel:j.billedDate?this.dLabel(j.billedDate):'—',isBilled:j.billing==='Billed',notBilled:j.billing!=='Billed',bill:()=>this.openBill(j.id),unbill:()=>this.setBillNotBilled(j.id)}));
+    const billQuery=(S.billQuery||'').trim().toLowerCase();
+    const billingFiltered=completedJobs.filter(j=>(!billQuery || j.customer.toLowerCase().includes(billQuery) || j.id.toLowerCase().includes(billQuery)) && (!S.billDate || j.date===S.billDate));
+    const billingView=billingFiltered.map(j=>({id:j.id,customer:j.customer,dateLabel:this.dLabel(j.date),pill:billPill(j.billing),invoice:j.invoice||'—',billedDateLabel:j.billedDate?this.dLabel(j.billedDate):'—',isBilled:j.billing==='Billed',notBilled:j.billing!=='Billed',bill:()=>this.openBill(j.id),unbill:()=>this.setBillNotBilled(j.id)}));
     const billTargetRaw=jobs.find(j=>j.id===S.billId);
     const billTarget=billTargetRaw?{id:billTargetRaw.id,customer:billTargetRaw.customer,dateLabel:this.dLabel(billTargetRaw.date)}:{id:'',customer:'',dateLabel:''};
 
@@ -1489,13 +1542,13 @@ class Component extends DCLogic {
     const reportTabs=reportTypes.map(r=>({label:r,active:rt===r,set:()=>this.setState({reportType:r}),style:rt===r?'padding:7px 13px;border-radius:4px;border:none;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;':'padding:7px 13px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#525252;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;'}));
     let reportCols=[], reportRows=[], reportTotal='';
     const gridCols=(n)=>`grid-template-columns:repeat(${n},1fr);`;
-    if(rt==='Completed job report'){ reportCols=['Job','Customer','Date','Officers','Total payable']; let tot=0; reportRows=completedJobs.map(j=>{ const sh=this.hrs(j.start,j.end); const t=j.officers.reduce((a,o)=>a+((o.actualStart&&o.actualEnd)?this.hrs(o.actualStart,o.actualEnd):sh)*o.rate,0); tot+=t; return [j.id,j.customer,this.dLabel(j.date),String(j.officers.length),this.money(t)]; }); reportTotal='Total payable across jobs: '+this.money(tot); }
+    if(rt==='Completed job report'){ reportCols=['Job','Customer','Date','Officers','Total payable','Job Report']; let tot=0; reportRows=completedJobs.map(j=>{ const sh=this.hrs(j.start,j.end); const t=j.officers.reduce((a,o)=>a+((o.actualStart&&o.actualEnd)?this.hrs(o.actualStart,o.actualEnd):sh)*o.rate,0); tot+=t; return [j.id,j.customer,this.dLabel(j.date),String(j.officers.length),this.money(t),{isAction:true,isText:false,v:'View',open:()=>this.openJobReport(j.id)}]; }); reportTotal='Total payable across jobs: '+this.money(tot); }
     else if(rt==='Officer payment report'){ reportCols=['Officer','Job','Date','Hours','Rate','Total','Status']; let tot=0; reportRows=S.payments.map(p=>{ tot+=p.hours*p.rate; return [p.officer,p.jobId,this.dLabel(p.jobDate),p.hours.toFixed(2)+'h',this.money(p.rate),this.money(p.hours*p.rate),p.status]; }); reportTotal='Total payroll: '+this.money(tot); }
     else if(rt==='Missing photo report'){ reportCols=['Job','Customer','Checkpoint','Status']; reportRows=[]; jobs.forEach(j=>j.photos.forEach(p=>{ if(p.status==='missing') reportRows.push([j.id,j.customer,p.time,'Missing']); })); reportTotal=reportRows.length+' missing checkpoint(s)'; }
     else if(rt==='Customer billing report'){ reportCols=['Job','Customer','Date','Invoice','Status']; reportRows=completedJobs.map(j=>[j.id,j.customer,this.dLabel(j.date),j.invoice||'—',j.billing]); reportTotal=completedJobs.filter(j=>j.billing==='Not Billed').length+' job(s) not yet billed'; }
     else { reportCols=['Officer','WhatsApp','Status','Total jobs']; reportRows=S.officers.map(o=>[o.name,o.phone,o.status,String(o.jobsCount)]); reportTotal=S.officers.length+' officers on record'; }
     const reportColStyle='display:grid;'+gridCols(reportCols.length);
-    const reportRowsView=reportRows.map((cells,i)=>({cells:cells.map((c,k)=>({v:c,k})),i}));
+    const reportRowsView=reportRows.map((cells,i)=>({cells:cells.map((c,k)=> typeof c==='object'&&c ? {...c,k,isText:!!c.isText} : {v:c,k,isText:true,isAction:false}),i}));
 
     return {
       navStyle, navTo, badge, stats,
@@ -1512,7 +1565,7 @@ class Component extends DCLogic {
       requestOpen:S.requestOpen, rform:S.rform, openRequest:()=>this.openRequest(), closeRequest:()=>this.closeRequest(), saveRequest:()=>this.saveRequest(),
       rf:{ customer:(e)=>this.setRF('customer',e.target.value), method:(e)=>this.setRF('method',e.target.value), location:(e)=>this.setRF('location',e.target.value), jobDate:(e)=>this.setRF('jobDate',e.target.value), start:(e)=>this.setRF('start',e.target.value), end:(e)=>this.setRF('end',e.target.value), officers:(e)=>this.setRF('officers',e.target.value), notes:(e)=>this.setRF('notes',e.target.value) },
       methodOptions:['WhatsApp','Email'].map(m=>({value:m,label:m})),
-      reportOpen:S.reportOpen, reportView, officerDetailOpen:!!officerDetailView, officerDetail:officerDetailView||{photos:[]}, officerProfileOpen:!!officerProfileView, officerProfile:officerProfileView||{history:[]}, openReport:()=>this.openReport(), closeReport:()=>this.closeReport(), printReport:()=>this.printReport(), copyReport:()=>this.copy('PilotNow Job Report — '+sel.id+' — '+sel.customer+' — '+this.dLabel(sel.date)+' — '+selPhotosReceived+' evidence photos — total payable '+this.money(selTotalPay),'Job report copied'),
+      reportOpen:S.reportOpen, reportEditing:S.reportEditing, reportEditLabel:S.reportEditing?'Done':'Edit', reportEditBtnStyle:S.reportEditing?'display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;':'display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;', reportView, officerDetailOpen:!!officerDetailView, officerDetail:officerDetailView||{photos:[]}, officerProfileOpen:!!officerProfileView, officerProfile:officerProfileView||{history:[]}, openReport:()=>this.openReport(), closeReport:()=>this.closeReport(), toggleReportEdit:()=>this.toggleReportEdit(), printReport:()=>this.printReport(), copyReport:()=>this.copy('PilotNow Job Report — '+sel.id+' — '+sel.customer+' — '+this.dLabel(sel.date)+' — '+selPhotosReceived+' evidence photos — total payable '+this.money(selTotalPay),'Job report copied'),
       addPick:S.addPick, onAddPick:(e)=>this.setState({addPick:e.target.value}), doAddOfficer:()=>this.addOfficer(sel.id),
       backToJobs:()=>this.setState({screen:'jobs'}),
       shiftJobs, shiftHasJobs, shiftTotals,
@@ -1522,7 +1575,8 @@ class Component extends DCLogic {
       payStatusTabs, payDate:S.payDate, payDateLabel, payFilteredTotal, payHasDate:!!S.payDate,
       onPayDate:(e)=>this.setState({payDate:e.target.value}), clearPayDate:()=>this.setState({payDate:''}),
       payHistoryOpen:!!payHistoryView, payHistory:payHistoryView||{rows:[]},
-      billingView,
+      billingView, billQuery:S.billQuery, billDate:S.billDate, billHasFilters:!!((S.billQuery||'').trim()||S.billDate), billFilteredCount:billingFiltered.length+'/'+completedJobs.length,
+      onBillQuery:(e)=>this.setState({billQuery:e.target.value}), onBillDate:(e)=>this.setState({billDate:e.target.value}), clearBillFilters:()=>this.setState({billQuery:'',billDate:''}),
       billOpen:S.billOpen, billTarget, bform:S.bform, closeBill:()=>this.closeBill(), confirmBill:()=>this.confirmBill(),
       bf:{ invoice:(e)=>this.setBF('invoice',e.target.value), billedDate:(e)=>this.setBF('billedDate',e.target.value) },
       reportTabs, reportType:rt, reportCols:reportCols.map((c,i)=>({v:c,i})), reportColStyle, reportRowsView, reportTotal,

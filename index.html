@@ -560,6 +560,20 @@
         <sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
         <div style="animation:pnfade .25s ease;">
           <div style="font-size:13px;color:#525252;margin-bottom:14px;">Completed jobs and their customer billing status.</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;padding:7px 11px;min-width:260px;flex:1;max-width:380px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input value="{{ billQuery }}" onInput="{{ onBillQuery }}" placeholder="Search customer name" style="border:none;outline:none;background:transparent;font-size:12.5px;color:#0A0A0A;width:100%;">
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;padding:6px 10px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">JOB DATE</span>
+              <input type="date" value="{{ billDate }}" onInput="{{ onBillDate }}" style="border:none;outline:none;background:transparent;font-size:12.5px;color:#0A0A0A;font-family:'Geist Mono',monospace;">
+            </div>
+            <sc-if value="{{ billHasFilters }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearBillFilters }}" style="padding:6px 10px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#525252;font-size:12px;font-weight:600;cursor:pointer;">Clear filters</button></sc-if>
+            <div style="flex:1;"></div>
+            <div style="font-size:12px;color:#A3A3A3;">Showing <span style="font-family:'Geist Mono',monospace;font-weight:700;color:#0A0A0A;">{{ billFilteredCount }}</span></div>
+          </div>
           <div style="background:#fff;border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
             <div style="display:grid;grid-template-columns:80px minmax(0,1.5fr) 92px 118px 84px 104px;font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:12px 20px;border-bottom:1px solid #E5E5E5;">
               <div>JOB</div><div>CUSTOMER</div><div>JOB DATE</div><div>INVOICE</div><div>BILLED</div><div style="text-align:right;">STATUS</div>
@@ -595,8 +609,21 @@
               <sc-for list="{{ reportCols }}" as="c" hint-placeholder-count="5"><div>{{ c.v }}</div></sc-for>
             </div>
             <sc-for list="{{ reportRowsView }}" as="row" hint-placeholder-count="5">
-              <div style="{{ reportColStyle }}padding:12px 20px;border-bottom:1px solid #EEEEEE;font-size:12.5px;color:#262626;">
-                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5"><div style="font-weight:500;">{{ cell.v }}</div></sc-for>
+              <div style="{{ reportColStyle }}align-items:center;padding:12px 20px;border-bottom:1px solid #EEEEEE;font-size:12.5px;color:#262626;">
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="6">
+                  <div style="font-weight:500;min-width:0;">
+                    <sc-if value="{{ cell.isAction }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ cell.open }}" title="View job report" style="display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;" style-hover="background:#F4F4F4;border-color:#D4D4D4;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M9 13h6M9 17h4"></path></svg>
+                        View
+                      </button>
+                    </sc-if>
+                    <sc-if value="{{ cell.isLink }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ cell.open }}" title="Open job details" style="border:none;background:transparent;padding:0;color:#0A0A0A;font-family:'Geist Mono',monospace;font-size:12.5px;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer;" style-hover="color:#1F4FA3;">{{ cell.v }}</button>
+                    </sc-if>
+                    <sc-if value="{{ cell.isText }}" hint-placeholder-val="{{ true }}"><span>{{ cell.v }}</span></sc-if>
+                  </div>
+                </sc-for>
               </div>
             </sc-for>
             <div style="padding:13px 20px;background:#FAFAFA;font-size:12.5px;color:#262626;font-weight:600;">{{ reportTotal }}</div>
@@ -716,11 +743,46 @@
         <div style="padding:20px 24px;display:flex;flex-direction:column;gap:15px;">
           <div>
             <label style="display:block;font-size:12px;font-weight:600;color:#262626;margin-bottom:6px;">Customer <span style="color:#FF3B30;">*</span></label>
-            <input value="{{ form.customer }}" onInput="{{ cf.customer }}" placeholder="e.g. Sentinel Events Pte Ltd" style="width:100%;padding:9px 11px;border:1px solid #E5E5E5;border-radius:4px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+            <div style="position:relative;">
+              <button onClick="{{ customerToggle }}" style="width:100%;display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#0A0A0A;font-size:13.5px;cursor:pointer;text-align:left;">
+                <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ customerSelectedLabel }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <sc-if value="{{ customerDropdownOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:0;right:0;top:42px;background:#fff;border:1px solid #D4D4D4;border-radius:4px;box-shadow:0 14px 32px rgba(0,0,0,0.14);z-index:6;overflow:hidden;">
+                  <div style="max-height:178px;overflow:auto;">
+                    <sc-for list="{{ customerOptions }}" as="c" hint-placeholder-count="5">
+                      <button onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
+                    </sc-for>
+                  </div>
+                  <div style="border-top:1px solid #E5E5E5;padding:10px;background:#FAFAFA;">
+                    <div style="font-size:11px;font-weight:700;color:#525252;margin-bottom:6px;">Add new customer</div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input value="{{ customerDraft }}" onInput="{{ cf.customerDraft }}" placeholder="Customer name" style="flex:1;min-width:0;padding:8px 9px;border:1px solid #E5E5E5;border-radius:4px;font-size:12.5px;color:#0A0A0A;outline:none;background:#fff;">
+                      <button onClick="{{ addCustomerInline }}" style="padding:8px 11px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
           </div>
           <div>
             <label style="display:block;font-size:12px;font-weight:600;color:#262626;margin-bottom:6px;">Job location <span style="color:#FF3B30;">*</span></label>
             <input value="{{ form.location }}" onInput="{{ cf.location }}" placeholder="e.g. Marina Bay Sands – Expo Hall B" style="width:100%;padding:9px 11px;border:1px solid #E5E5E5;border-radius:4px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;" style-focus="border-color:#0A0A0A;">
+          </div>
+          <div style="border:1px solid #E5E5E5;border-radius:6px;padding:13px;background:#FAFAFA;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <div style="font-size:12.5px;font-weight:700;color:#0A0A0A;">Job geofence</div>
+              <div style="flex:1;"></div>
+              <span style="font-size:10.5px;font-weight:700;color:#8A5A00;background:#FFF4D6;border:1px solid #F0E1B8;border-radius:999px;padding:2px 7px;">Required for GPS check</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 0.8fr;gap:10px;">
+              <div><label style="display:block;font-size:11px;font-weight:600;color:#525252;margin-bottom:5px;">Latitude <span style="color:#FF3B30;">*</span></label><input type="number" step="0.00001" value="{{ form.lat }}" onInput="{{ cf.lat }}" placeholder="1.28390" style="width:100%;padding:8px 10px;border:1px solid #E5E5E5;border-radius:4px;font-size:13px;color:#0A0A0A;outline:none;background:#fff;font-family:'Geist Mono',monospace;" style-focus="border-color:#0A0A0A;"></div>
+              <div><label style="display:block;font-size:11px;font-weight:600;color:#525252;margin-bottom:5px;">Longitude <span style="color:#FF3B30;">*</span></label><input type="number" step="0.00001" value="{{ form.lng }}" onInput="{{ cf.lng }}" placeholder="103.86070" style="width:100%;padding:8px 10px;border:1px solid #E5E5E5;border-radius:4px;font-size:13px;color:#0A0A0A;outline:none;background:#fff;font-family:'Geist Mono',monospace;" style-focus="border-color:#0A0A0A;"></div>
+              <div><label style="display:block;font-size:11px;font-weight:600;color:#525252;margin-bottom:5px;">Radius (m) <span style="color:#FF3B30;">*</span></label><input type="number" min="20" step="10" value="{{ form.radiusM }}" onInput="{{ cf.radiusM }}" placeholder="120" style="width:100%;padding:8px 10px;border:1px solid #E5E5E5;border-radius:4px;font-size:13px;color:#0A0A0A;outline:none;background:#fff;font-family:'Geist Mono',monospace;" style-focus="border-color:#0A0A0A;"></div>
+            </div>
+            <div style="font-size:11px;color:#A3A3A3;margin-top:8px;">Officer check-in and check-out GPS will be compared against this radius.</div>
           </div>
           <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;">
             <div><label style="display:block;font-size:12px;font-weight:600;color:#262626;margin-bottom:6px;">Job date</label><input type="date" value="{{ form.date }}" onInput="{{ cf.date }}" style="width:100%;padding:9px 11px;border:1px solid #E5E5E5;border-radius:4px;font-size:13.5px;color:#0A0A0A;outline:none;background:#fff;"></div>
@@ -795,6 +857,7 @@
       <div id="job-report" style="background:#fff;width:780px;max-width:100%;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,0.16);overflow:hidden;">
         <div id="report-actions" style="display:flex;align-items:center;gap:9px;padding:14px 20px;border-bottom:1px solid #E5E5E5;background:#FAFAFA;">
           <div style="flex:1;font-size:13px;font-weight:600;color:#262626;">Job completion report</div>
+          <button onClick="{{ toggleReportEdit }}" style="{{ reportEditBtnStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> {{ reportEditLabel }}</button>
           <button onClick="{{ printReport }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6Z"></path></svg> Print / PDF</button>
           <button onClick="{{ copyReport }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy</button>
           <button onClick="{{ closeReport }}" style="width:34px;height:34px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#F4F4F4;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
@@ -867,14 +930,31 @@
           </div>
 
           <!-- Proof of presence -->
-          <div style="margin-top:26px;">
-            <div style="display:flex;align-items:baseline;gap:8px;padding-bottom:8px;border-bottom:2px solid #0A0A0A;"><div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:#0A0A0A;letter-spacing:0.06em;">PROOF OF PRESENCE</div><div style="flex:1;"></div><span style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;letter-spacing:0.06em;">{{ reportView.proofSummary }}</span></div>
-            <sc-if value="{{ reportView.hasProof }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ reportView.proofSectionStyle }}">
+            <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:2px solid #0A0A0A;"><div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:#0A0A0A;letter-spacing:0.06em;">PROOF OF PRESENCE</div><sc-if value="{{ reportEditing }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;font-weight:700;color:#8A5A00;background:#FFF4D6;border:1px solid #F0E1B8;border-radius:999px;padding:2px 7px;">Editing photos</span></sc-if><div style="flex:1;"></div><span style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;letter-spacing:0.06em;">{{ reportView.proofSummary }}</span></div>
+            <sc-if value="{{ reportEditing }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;margin-bottom:12px;padding:10px 12px;border:1px solid #F0E1B8;border-radius:4px;background:#FFFDF5;display:flex;align-items:center;gap:9px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A5A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#0A0A0A;">Only this section is editable</div><div style="font-size:11.5px;color:#525252;margin-top:2px;">Removed photos are hidden from preview. In edit mode, hidden photos appear here so you can review audit history or replace them.</div></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ reportView.showProofTiles }}" hint-placeholder-val="{{ true }}">
               <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px;">
                 <sc-for list="{{ reportView.proofTiles }}" as="t" hint-placeholder-count="6">
-                  <div style="position:relative;border:1px solid #E5E5E5;border-radius:2px;height:92px;background:linear-gradient(to top right, transparent calc(50% - 0.5px), #EDEDED calc(50% - 0.5px), #EDEDED calc(50% + 0.5px), transparent calc(50% + 0.5px)),linear-gradient(to bottom right, transparent calc(50% - 0.5px), #EDEDED calc(50% - 0.5px), #EDEDED calc(50% + 0.5px), transparent calc(50% + 0.5px));">
+                  <div style="{{ t.tileStyle }}">
                     <div style="position:absolute;top:7px;left:8px;font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:600;color:#525252;">{{ t.time }}</div>
                     <div style="position:absolute;bottom:7px;left:8px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.06em;{{ t.capStyle }}">{{ t.cap }}</div>
+                    <sc-if value="{{ t.showEditLabel }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:6px;right:6px;top:31px;font-size:10px;font-weight:700;color:#8A5A00;background:#FFF4D6;border:1px solid #F0E1B8;border-radius:3px;padding:2px 4px;text-align:center;">{{ t.editLabel }}</div></sc-if>
+                    <sc-if value="{{ t.canMenu }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ t.menu }}" style="position:absolute;top:5px;right:5px;display:inline-flex;align-items:center;gap:4px;height:24px;border:1px solid #D4D4D4;border-radius:4px;background:#fff;color:#262626;cursor:pointer;padding:0 7px;font-size:10.5px;font-weight:700;" title="Photo actions"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg> Actions</button>
+                      <sc-if value="{{ t.menuOpen }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:absolute;right:5px;top:32px;width:172px;background:#fff;border:1px solid #E5E5E5;border-radius:4px;box-shadow:0 10px 24px rgba(0,0,0,0.12);z-index:3;overflow:hidden;">
+                          <button onClick="{{ t.remove }}" style="width:100%;padding:9px 10px;border:none;background:#fff;color:#B31D15;font-size:11.5px;font-weight:600;text-align:left;cursor:pointer;">Remove from report</button>
+                          <label style="display:block;width:100%;padding:9px 10px;border-top:1px solid #F4F4F4;background:#fff;color:#262626;font-size:11.5px;font-weight:600;text-align:left;cursor:pointer;">Replace report photo<input type="file" accept="image/*" onChange="{{ t.replace }}" style="display:none;"></label>
+                          <button onClick="{{ t.audit }}" style="width:100%;padding:9px 10px;border:none;border-top:1px solid #F4F4F4;background:#fff;color:#262626;font-size:11.5px;font-weight:600;text-align:left;cursor:pointer;">View audit history</button>
+                        </div>
+                      </sc-if>
+                    </sc-if>
                   </div>
                 </sc-for>
               </div>
@@ -933,6 +1013,26 @@
     </div>
   </sc-if>
 
+  <!-- Report proof audit history -->
+  <sc-if value="{{ reportAuditOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.42);z-index:97;display:flex;align-items:center;justify-content:center;padding:24px;animation:pnfade .15s ease;">
+      <div style="background:#fff;border-radius:6px;width:560px;max-width:100%;max-height:86vh;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.22);">
+        <div style="display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid #E5E5E5;">
+          <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:700;color:#0A0A0A;">Proof audit history</div><div style="font-size:11.5px;color:#A3A3A3;">{{ reportAuditView.title }}</div></div>
+          <button onClick="{{ closeReportAudit }}" style="width:32px;height:32px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#A3A3A3;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#F4F4F4;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+        <div style="padding:16px 20px;overflow:auto;">
+          <sc-for list="{{ reportAuditView.events }}" as="ev" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid #EEEEEE;">
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;color:#525252;">{{ ev.at }}</div>
+              <div style="min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#0A0A0A;">{{ ev.type }}</div><div style="font-size:12px;color:#525252;margin-top:3px;">{{ ev.note }}</div><div style="font-size:11px;color:#A3A3A3;margin-top:4px;">By {{ ev.by }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- Officer duty detail modal -->
   <sc-if value="{{ officerDetailOpen }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;background:rgba(0,0,0,0.30);z-index:92;display:flex;align-items:center;justify-content:center;padding:24px;animation:pnfade .15s ease;">
@@ -962,9 +1062,40 @@
           </div>
 
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#E5E5E5;border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;margin-bottom:12px;">
-            <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">CHECK-IN</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.checkIn }}</div></div>
-            <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">CHECK-OUT</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.checkOut }}</div></div>
+            <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">CHECK-IN</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.checkIn }}</div><div style="{{ officerDetail.checkInLocationStyle }}">{{ officerDetail.checkInLocationStatus }}</div></div>
+            <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">CHECK-OUT</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.checkOut }}</div><div style="{{ officerDetail.checkOutLocationStyle }}">{{ officerDetail.checkOutLocationStatus }}</div></div>
             <div style="background:#fff;padding:12px 14px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.06em;">HOURS</div><div style="font-size:15px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;margin-top:3px;">{{ officerDetail.workedLabel }}</div></div>
+          </div>
+          <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;margin-bottom:16px;background:#fff;">
+            <div style="display:flex;align-items:center;gap:9px;padding:13px 14px;border-bottom:1px solid #E5E5E5;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#0A0A0A;">Attendance locations</div><div style="font-size:11.5px;color:#A3A3A3;">Validate check-in and check-out GPS points against the job site radius.</div></div>
+              <span style="{{ officerDetail.locationPill.style }}">{{ officerDetail.locationPill.label }}</span>
+            </div>
+            <sc-if value="{{ officerDetail.hasLocation }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:12px 14px;border-bottom:1px solid #F4F4F4;background:#FAFAFA;">
+                <div style="font-size:11px;color:#A3A3A3;font-weight:600;margin-bottom:4px;">Job allowed area</div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span style="font-size:12.5px;font-weight:700;color:#0A0A0A;">{{ officerDetail.jobLocation }}</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#525252;">{{ officerDetail.jobCoords }}</span><span style="font-size:11px;color:#A3A3A3;">Radius {{ officerDetail.jobRadius }}</span></div>
+              </div>
+              <sc-for list="{{ officerDetail.locationRows }}" as="lr" hint-placeholder-count="2">
+                <div style="display:grid;grid-template-columns:82px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid #F4F4F4;">
+                  <div style="width:82px;height:54px;border:1px solid #E5E5E5;border-radius:6px;background:#fff;position:relative;overflow:hidden;">
+                    <div style="position:absolute;left:18px;top:8px;width:46px;height:38px;border:2px solid #0A7A3B;border-radius:50%;background:#E8F5EC;"></div>
+                    <div style="position:absolute;left:39px;top:24px;width:6px;height:6px;border-radius:50%;background:#0A0A0A;"></div>
+                    <div style="{{ lr.mapDotStyle }}"></div>
+                  </div>
+                  <div style="min-width:0;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;"><span style="font-size:12.5px;font-weight:700;color:#0A0A0A;">{{ lr.label }}</span><span style="{{ lr.pill.style }}">{{ lr.pill.label }}</span></div>
+                    <div style="font-size:12px;color:#525252;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ lr.address }}</div>
+                    <div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A3A3A3;margin-top:3px;">{{ lr.coords }} · {{ lr.distanceLabel }} from site · accuracy {{ lr.accuracy }}</div>
+                  </div>
+                  <button onClick="{{ lr.copy }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy</button>
+                </div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ officerDetail.noLocation }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:14px;font-size:12.5px;color:#8A5A00;background:#FFF4D6;">No GPS location was captured for this check-in. Ask the officer to enable location permission before checking in.</div>
+            </sc-if>
           </div>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
             <span style="{{ officerDetail.confirmPill.style }}">{{ officerDetail.confirmPill.label }}</span>
@@ -976,25 +1107,71 @@
 
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#A3A3A3;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">Evidence photos posted</div><div style="flex:1;height:1px;background:#E5E5E5;"></div><span style="font-size:11.5px;color:#525252;font-weight:600;">{{ officerDetail.photoCount }} of {{ officerDetail.expectedCount }}</span></div>
           <sc-if value="{{ officerDetail.noPhotos }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:12px;color:#A3A3A3;margin-bottom:10px;">No officer-submitted photos yet — you can add one on their behalf.</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:12px;border:1px dashed #D4D4D4;border-radius:6px;background:#FAFAFA;">
+              <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:700;color:#0A0A0A;">No evidence photos yet</div><div style="font-size:12px;color:#A3A3A3;margin-top:2px;">Add the first photo on behalf of this officer, then future photos will be grouped by timestamp.</div></div>
+              <sc-if value="{{ officerDetail.canAddPhoto }}" hint-placeholder-val="{{ true }}"><button onClick="{{ officerDetail.openPhotoForm }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.5"></path></svg> Add Photo</button></sc-if>
+            </div>
           </sc-if>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
-            <sc-for list="{{ officerDetail.photos }}" as="ph" hint-placeholder-count="2">
-              <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
-                <sc-if value="{{ ph.hasSrc }}" hint-placeholder-val="{{ false }}"><div style="height:96px;background:#000;"><img src="{{ ph.src }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div></sc-if>
-                <sc-if value="{{ ph.noSrc }}" hint-placeholder-val="{{ true }}"><div style="height:96px;"><image-slot id="{{ ph.slotId }}" shape="rect" placeholder="photo"></image-slot></div></sc-if>
-                <div style="padding:7px 9px;border-top:1px solid #E5E5E5;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:12px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ ph.time }}</span><sc-if value="{{ ph.manual }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;font-weight:700;letter-spacing:0.04em;color:#8A5A00;background:#FFF4D6;padding:1px 5px;border-radius:3px;">ADMIN</span></sc-if></div><div style="font-size:10.5px;color:#A3A3A3;">{{ ph.stampLabel }}</div></div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ officerDetail.photoGroups }}" as="grp" hint-placeholder-count="3">
+              <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;background:#fff;">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#FAFAFA;border-bottom:1px solid #E5E5E5;">
+                  <button onClick="{{ grp.toggle }}" style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:none;background:transparent;padding:0;text-align:left;cursor:pointer;" style-hover="color:#0A0A0A;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#525252" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="{{ grp.chevronStyle }}"><path d="m9 18 6-6-6-6"></path></svg>
+                    <span style="font-family:'Geist Mono',monospace;font-size:13px;font-weight:800;color:#0A0A0A;">{{ grp.time }}</span>
+                    <span style="font-size:11.5px;color:#A3A3A3;">{{ grp.countLabel }}</span>
+                  </button>
+                  <div style="flex:1;"></div>
+                  <sc-if value="{{ grp.canAdd }}" hint-placeholder-val="{{ true }}"><button onClick="{{ grp.add }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:11.5px;font-weight:600;cursor:pointer;" style-hover="background:#F4F4F4;border-color:#D4D4D4;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.5"></path></svg> Add Photo</button></sc-if>
+                </div>
+                <sc-if value="{{ grp.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:12px;">
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+                      <sc-for list="{{ grp.photos }}" as="ph" hint-placeholder-count="2">
+                        <div style="border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;">
+                          <sc-if value="{{ ph.hasSrc }}" hint-placeholder-val="{{ false }}"><div style="height:96px;background:#000;"><img src="{{ ph.src }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div></sc-if>
+                          <sc-if value="{{ ph.noSrc }}" hint-placeholder-val="{{ true }}"><div style="height:96px;"><image-slot id="{{ ph.slotId }}" shape="rect" placeholder="photo"></image-slot></div></sc-if>
+                          <div style="padding:7px 9px;border-top:1px solid #E5E5E5;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:12px;font-weight:700;color:#0A0A0A;font-family:'Geist Mono',monospace;">{{ ph.at }}</span><sc-if value="{{ ph.manual }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;font-weight:700;letter-spacing:0.04em;color:#8A5A00;background:#FFF4D6;padding:1px 5px;border-radius:3px;">ADMIN</span></sc-if></div><div style="font-size:10.5px;color:#A3A3A3;">{{ ph.stampLabel }}</div></div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ grp.addOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="border-top:1px solid #E5E5E5;padding:14px;background:#FAFAFA;">
+                    <div style="font-size:12.5px;font-weight:700;color:#0A0A0A;margin-bottom:2px;">Add photo for {{ grp.time }}</div>
+                    <div style="font-size:11px;color:#A3A3A3;margin-bottom:12px;">Attach another photo for this timestamp. The timestamp is fixed to this group.</div>
+                    <div style="margin-bottom:11px;">
+                      <label style="display:block;font-size:11px;font-weight:600;color:#262626;margin-bottom:5px;">Photo</label>
+                      <sc-if value="{{ officerDetail.hasPhoto }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:11px;border:1px solid #E5E5E5;border-radius:6px;padding:8px;background:#fff;">
+                          <div style="width:64px;height:64px;border-radius:4px;overflow:hidden;background:#000;flex:0 0 64px;"><img src="{{ officerDetail.formPhoto }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+                          <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#0A0A0A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ officerDetail.formPhotoName }}</div><div style="font-size:10.5px;color:#0A7A3B;font-weight:600;">Attached ✓</div></div>
+                          <button onClick="{{ officerDetail.clearPhoto }}" title="Remove" style="width:28px;height:28px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#B31D15;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 28px;" style-hover="background:#FFF1F0;border-color:#F5C6C2;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                        </div>
+                      </sc-if>
+                      <label style="display:flex;align-items:center;justify-content:center;gap:8px;border:1px dashed #C9C9C9;border-radius:6px;padding:14px;cursor:pointer;background:#fff;color:#525252;font-size:12.5px;font-weight:600;margin-top:9px;" style-hover="border-color:#0A0A0A;color:#0A0A0A;background:#FAFAFA;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5M12 3v12"></path></svg>
+                        <span>{{ officerDetail.uploadLabel }}</span>
+                        <input type="file" accept="image/*" onChange="{{ officerDetail.opf.photo }}" style="display:none;">
+                      </label>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+                      <div style="font-size:12px;color:#525252;">Saved to <span style="font-family:'Geist Mono',monospace;font-weight:700;color:#0A0A0A;">{{ grp.time }}</span> on {{ officerDetail.formDate }}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:13px;">
+                      <button onClick="{{ officerDetail.cancelPhoto }}" style="padding:8px 14px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#FAFAFA;">Cancel</button>
+                      <button onClick="{{ officerDetail.savePhoto }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:#262626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg> Add photo</button>
+                    </div>
+                  </div>
+                </sc-if>
               </div>
             </sc-for>
-            <sc-if value="{{ officerDetail.canAddPhoto }}" hint-placeholder-val="{{ true }}">
-              <div onClick="{{ officerDetail.openPhotoForm }}" title="Add a photo on behalf of this officer" style="border:1px dashed #C9C9C9;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:124px;cursor:pointer;color:#525252;background:#FAFAFA;" style-hover="border-color:#0A0A0A;color:#0A0A0A;background:#F4F4F4;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4Z"></path><circle cx="12" cy="13" r="3.2"></circle><path d="M12 10.5v5M9.5 13h5" stroke-width="1.5"></path></svg>
-                <span style="font-size:11.5px;font-weight:600;">Add photo</span>
-              </div>
-            </sc-if>
           </div>
+          <!-- Legacy add-photo form retained only as a fallback if a timestamp has not been selected. -->
           <sc-if value="{{ officerDetail.addOpen }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:12px;border:1px solid #E5E5E5;border-radius:6px;padding:14px;background:#FAFAFA;">
+            <div style="{{ officerDetail.legacyAddStyle }}">
               <div style="font-size:12.5px;font-weight:700;color:#0A0A0A;margin-bottom:2px;">Add photo on behalf of officer</div>
               <div style="font-size:11px;color:#A3A3A3;margin-bottom:12px;">Attach the photo the officer sent, then enter the exact date and time it was sent (e.g. from the personal chat) — not the current time.</div>
               <div style="margin-bottom:11px;">
@@ -1209,9 +1386,9 @@ class Component extends DCLogic {
 
   state = {
     screen:'dashboard', jobId:'PN-2041', jobTab:'overview', toast:null, addPick:'', jobFilter:'All', summaryJobId:'PN-2044', summaryDetail:false, reportType:'Completed job report',
-    createOpen:false, form:{customer:'',location:'',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''},
+    createOpen:false, customCustomers:[], customerDropdownOpen:false, customerDraft:'', form:{customer:'',customerMode:'',location:'',lat:'',lng:'',radiusM:'120',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''},
     officerOpen:false, officerEditId:null, officerMenuId:null, oform:{name:'',phone:'',rate:'16',ic:false,status:'New',notes:''},
-    reportOpen:false, officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}, photoView:null, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null,
+    reportOpen:false, reportEditing:false, reportAudit:null, reportMenu:null, officerDetailOid:null, evidenceOpenTime:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}, photoView:null, officerProfileId:null, payStatus:'All', payDate:'', payHistOfficer:null, billQuery:'', billDate:'',
     profileMenuOpen:false,
     admin:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233', role:'Operations Admin', team:'PilotNow Security Ops', company:'PilotNow Security Pte Ltd', memberSince:'Jan 2025', pwChanged:'1 month ago' },
     pform:{ name:'Serene Lau', email:'serene.lau@pilotnow.sg', phone:'+65 8100 2233' },
@@ -1229,12 +1406,12 @@ class Component extends DCLogic {
       {id:'OF-08',name:'Deepak Raj',phone:'+65 9077 4521',status:'Active',ic:true,rate:19,jobsCount:28},
     ],
     jobs:[
-      {id:'PN-2041',customer:'Sentinel Events Pte Ltd',location:'Marina Bay Sands – Expo Hall B',date:'2026-07-08',start:'18:00',end:'23:00',required:4,status:'Ongoing',posted:true,
+      {id:'PN-2041',customer:'Sentinel Events Pte Ltd',location:'Marina Bay Sands – Expo Hall B',site:{lat:1.28390,lng:103.86070,radiusM:120},date:'2026-07-08',start:'18:00',end:'23:00',required:4,status:'Ongoing',posted:true,
         description:'Crowd control and access management for a 600-pax corporate gala dinner.',instructions:'Black-tie event. Report to Ops Manager Mr. Chua at Loading Bay 2 by 17:30. No mobile phones on the floor.',cancelReason:'',
         officers:[
-          {oid:'OF-01',name:'Rajesh Kumar',ic:'Yes',rate:16,confirmed:true,onDuty:true,actualStart:'18:02',actualEnd:''},
-          {oid:'OF-02',name:'Muhammad Faizal',ic:'Yes',rate:15,confirmed:true,onDuty:true,actualStart:'18:00',actualEnd:''},
-          {oid:'OF-03',name:'Tan Wei Ming',ic:'Yes',rate:18,confirmed:true,onDuty:false,actualStart:'',actualEnd:''},
+          {oid:'OF-01',name:'Rajesh Kumar',ic:'Yes',rate:16,confirmed:true,onDuty:true,actualStart:'18:02',actualEnd:'',checkInLocation:{lat:1.28386,lng:103.86062,accuracyM:18,address:'Expo Hall B staff entrance, Marina Bay Sands'}},
+          {oid:'OF-02',name:'Muhammad Faizal',ic:'Yes',rate:15,confirmed:true,onDuty:true,actualStart:'18:00',actualEnd:'',checkInLocation:{lat:1.28242,lng:103.85896,accuracyM:24,address:'Bayfront MRT Exit B pickup point'}},
+          {oid:'OF-03',name:'Tan Wei Ming',ic:'Yes',rate:18,confirmed:true,onDuty:true,actualStart:'18:04',actualEnd:''},
         ],
         photos:[
           {time:'18:00',status:'received',by:'Rajesh Kumar',at:'18:05'},
@@ -1243,13 +1420,13 @@ class Component extends DCLogic {
           {time:'21:00',status:'upcoming',by:'',at:''},
           {time:'22:00',status:'upcoming',by:'',at:''},
         ], billing:'Not Billed', invoice:'', billedDate:''},
-      {id:'PN-2042',customer:'Changi Airport Group',location:'Jewel Changi – Level 1 Atrium',date:'2026-07-08',start:'08:00',end:'20:00',required:6,status:'Waiting for Officers',posted:true,
+      {id:'PN-2042',customer:'Changi Airport Group',location:'Jewel Changi – Level 1 Atrium',site:{lat:1.36020,lng:103.98976,radiusM:140},date:'2026-07-08',start:'08:00',end:'20:00',required:6,status:'Waiting for Officers',posted:true,
         description:'Retail concourse patrol and lost-and-found support during school holidays.',instructions:'Uniform: Class A. Coordinate with Jewel Ops room B1-22.',cancelReason:'',
         officers:[
           {oid:'OF-05',name:'Lim Jun Hao',ic:'Yes',rate:17,confirmed:true,onDuty:false,actualStart:'',actualEnd:''},
           {oid:'OF-08',name:'Deepak Raj',ic:'Yes',rate:19,confirmed:false,onDuty:false,actualStart:'',actualEnd:''},
         ], photos:[], billing:'Not Billed', invoice:'', billedDate:''},
-      {id:'PN-2050',customer:'Resorts World Sentosa',location:'RWS – Festive Grand Theatre',date:'2026-07-08',start:'17:00',end:'23:30',required:5,status:'Confirmed',posted:true,
+      {id:'PN-2050',customer:'Resorts World Sentosa',location:'RWS – Festive Grand Theatre',site:{lat:1.25539,lng:103.82012,radiusM:130},date:'2026-07-08',start:'17:00',end:'23:30',required:5,status:'Confirmed',posted:true,
         description:'Ticketed show — foyer and hall access control.',instructions:'Report to backstage security desk by 16:30.',cancelReason:'',
         officers:[
           {oid:'OF-05',name:'Lim Jun Hao',ic:'Yes',rate:17,confirmed:true,onDuty:false,actualStart:'',actualEnd:''},
@@ -1258,22 +1435,22 @@ class Component extends DCLogic {
           {oid:'OF-03',name:'Tan Wei Ming',ic:'Yes',rate:18,confirmed:true,onDuty:false,actualStart:'',actualEnd:''},
           {oid:'OF-02',name:'Muhammad Faizal',ic:'Yes',rate:15,confirmed:true,onDuty:false,actualStart:'',actualEnd:''},
         ], photos:[], billing:'Not Billed', invoice:'', billedDate:''},
-      {id:'PN-2051',customer:'ION Orchard',location:'ION Orchard – Level 1 Concierge',date:'2026-07-08',start:'11:00',end:'21:00',required:3,status:'Waiting for Officers',posted:true,
+      {id:'PN-2051',customer:'ION Orchard',location:'ION Orchard – Level 1 Concierge',site:{lat:1.30402,lng:103.83186,radiusM:100},date:'2026-07-08',start:'11:00',end:'21:00',required:3,status:'Waiting for Officers',posted:true,
         description:'Weekend mall concourse patrol and bag-check.',instructions:'Class A uniform. Report to mall command centre B2.',cancelReason:'',
         officers:[
           {oid:'OF-06',name:'Siti Nurhaliza',ic:'Yes',rate:16,confirmed:false,onDuty:false,actualStart:'',actualEnd:''},
         ], photos:[], billing:'Not Billed', invoice:'', billedDate:''},
-      {id:'PN-2052',customer:'Capitaland',location:'Raffles City – Atrium',date:'2026-07-08',start:'09:00',end:'18:00',required:2,status:'Posted to WhatsApp',posted:true,
+      {id:'PN-2052',customer:'Capitaland',location:'Raffles City – Atrium',site:{lat:1.29317,lng:103.85204,radiusM:110},date:'2026-07-08',start:'09:00',end:'18:00',required:2,status:'Posted to WhatsApp',posted:true,
         description:'Roadshow perimeter and queue management.',instructions:'Setup from 08:30 with event crew.',cancelReason:'',
         officers:[], photos:[], billing:'Not Billed', invoice:'', billedDate:''},
-      {id:'PN-2043',customer:'Suntec Convention',location:'Suntec City – Hall 601',date:'2026-07-10',start:'09:00',end:'18:00',required:3,status:'Posted to WhatsApp',posted:true,
+      {id:'PN-2043',customer:'Suntec Convention',location:'Suntec City – Hall 601',site:{lat:1.29364,lng:103.85709,radiusM:130},date:'2026-07-10',start:'09:00',end:'18:00',required:3,status:'Posted to WhatsApp',posted:true,
         description:'Access control at trade-expo registration counters.',instructions:'Report to Hall 601 concierge.',cancelReason:'',
         officers:[], photos:[], billing:'Not Billed', invoice:'', billedDate:''},
-      {id:'PN-2044',customer:'VivoCity Mall Mgmt',location:'VivoCity – Level 1 Main Entrance',date:'2026-07-07',start:'10:00',end:'22:00',required:2,status:'Completed',posted:true,
+      {id:'PN-2044',customer:'VivoCity Mall Mgmt',location:'VivoCity – Level 1 Main Entrance',site:{lat:1.26440,lng:103.82213,radiusM:120},date:'2026-07-07',start:'10:00',end:'22:00',required:2,status:'Completed',posted:true,
         description:'Mall entrance bag-check and crowd flow.',instructions:'Standard mall SOP.',cancelReason:'',
         officers:[
-          {oid:'OF-03',name:'Tan Wei Ming',ic:'Yes',rate:18,confirmed:true,onDuty:true,actualStart:'10:00',actualEnd:'22:00'},
-          {oid:'OF-05',name:'Lim Jun Hao',ic:'Yes',rate:17,confirmed:true,onDuty:true,actualStart:'10:05',actualEnd:'22:10'},
+          {oid:'OF-03',name:'Tan Wei Ming',ic:'Yes',rate:18,confirmed:true,onDuty:true,actualStart:'10:00',actualEnd:'22:00',checkInLocation:{lat:1.26434,lng:103.82221,accuracyM:16,address:'VivoCity Level 1 main entrance'},checkOutLocation:{lat:1.26291,lng:103.81958,accuracyM:26,address:'HarbourFront bus stop'}},
+          {oid:'OF-05',name:'Lim Jun Hao',ic:'Yes',rate:17,confirmed:true,onDuty:true,actualStart:'10:05',actualEnd:'22:10',checkOutLocation:{lat:1.26289,lng:103.81962,accuracyM:27,address:'HarbourFront bus stop'}},
         ], photos:[
           {time:'11:00',status:'received',by:'Tan Wei Ming',at:'11:02'},
           {time:'12:00',status:'received',by:'Tan Wei Ming',at:'12:01'},
@@ -1328,6 +1505,9 @@ class Component extends DCLogic {
 
   hrs(a,b){ if(!a||!b) return 0; const [h1,m1]=a.split(':').map(Number); const [h2,m2]=b.split(':').map(Number); let d=(h2*60+m2)-(h1*60+m1); if(d<0)d+=1440; return Math.round(d/60*100)/100; }
   money(n){ return 'S$'+n.toLocaleString('en-SG',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  metersBetween(a,b){ if(!a||!b||a.lat==null||a.lng==null||b.lat==null||b.lng==null) return null; const R=6371000, rad=x=>x*Math.PI/180; const dLat=rad(b.lat-a.lat), dLng=rad(b.lng-a.lng); const la1=rad(a.lat), la2=rad(b.lat); const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2; return Math.round(2*R*Math.asin(Math.sqrt(h))); }
+  formatCoords(p){ return p&&p.lat!=null&&p.lng!=null ? Number(p.lat).toFixed(5)+', '+Number(p.lng).toFixed(5) : '—'; }
+  locationPill(ok,has){ const mk=(bg,fg,label)=>({label,style:`display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:${bg};color:${fg};white-space:nowrap;`}); if(!has) return mk('#FFF4D6','#8A5A00','No GPS'); return ok?mk('#E8F5EC','#0A7A3B','Inside site'):mk('#FFF1F0','#B31D15','Outside site'); }
   linkToken(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return ('000000'+h.toString(36).toUpperCase()).slice(-6); }
   dutyLinkFor(job,o){ return 'https://duty.pilotnow.sg/o/'+job.id+'-'+o.oid+'?t='+this.linkToken(job.id+'-'+o.oid); }
   dutyMsgFor(job,o){ return 'Hi '+o.name+', here is your PilotNow duty link for Job '+job.id+' — '+job.customer+', '+job.location+' on '+this.dLabel(job.date)+' ('+job.start+'–'+job.end+').\nUse it to check in, check out and upload your hourly proof photos:\n'+this.dutyLinkFor(job,o)+'\n– PilotNow Ops'; }
@@ -1337,15 +1517,18 @@ class Component extends DCLogic {
   toastMsg(msg){ this.setState({toast:msg}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),2200); }
   copy(text,msg){ try{navigator.clipboard.writeText(text);}catch(e){} this.toastMsg(msg||'Copied to clipboard'); }
   openJob(id){ this.setState({screen:'jobDetail',jobId:id,jobTab:'overview'}); }
-  createJob(){ this.setState({createOpen:true, form:{customer:'',location:'',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''}}); }
-  closeCreate(){ this.setState({createOpen:false}); }
+  createJob(){ const customers=Array.from(new Set(this.state.jobs.map(j=>j.customer).concat(this.state.customCustomers||[]).filter(Boolean))).sort(); const first=customers[0]||''; this.setState({createOpen:true, customerDropdownOpen:false, customerDraft:'', form:{customer:first,customerMode:first,location:'',lat:'',lng:'',radiusM:'120',date:'2026-07-12',start:'09:00',end:'18:00',required:'2',description:'',instructions:''}}); }
+  closeCreate(){ this.setState({createOpen:false, customerDropdownOpen:false, customerDraft:''}); }
   openRequest(){ this.setState({requestOpen:true, screen:'requests', rform:{customer:'',method:'WhatsApp',location:'',jobDate:'2026-07-12',start:'09:00',end:'18:00',officers:'2',notes:''}}); }
   closeRequest(){ this.setState({requestOpen:false}); }
   setRF(k,v){ this.setState(s=>({rform:{...s.rform,[k]:v}})); }
   convertRequest(reqId){ const r=this.state.requests.find(x=>x.id===reqId); if(!r) return; if(r.status!=='New'){ this.toastMsg('Only New requests can be converted'); return; } const nums=this.state.jobs.map(j=>parseInt(j.id.replace('PN-',''),10)||0); const nid='PN-'+(Math.max(0,...nums)+1); const job={id:nid,customer:r.customer,location:r.location,date:r.jobDate,start:r.start,end:r.end,required:Number(r.officers)||1,status:'Draft',posted:false,description:(r.notes||'').trim()||('Converted from request '+r.id+'.'),instructions:'',cancelReason:'',officers:[],photos:[],billing:'Not Billed',invoice:'',billedDate:''}; this.setState(s=>({jobs:[job,...s.jobs],requests:s.requests.map(x=>x.id===reqId?{...x,status:'Converted'}:x),screen:'jobDetail',jobId:nid,jobTab:'overview'})); this.toastMsg('Request converted → Job '+nid+' created as Draft'); }
   saveRequest(){ const f=this.state.rform; if(!f.customer.trim()||!f.location.trim()){ this.toastMsg('Enter a customer and location first'); return; } const nums=this.state.requests.map(r=>parseInt(r.id.replace('RQ-',''),10)||0); const nid='RQ-'+(Math.max(0,...nums)+1); const req={id:nid,customer:f.customer.trim(),method:f.method,reqDate:this.TODAY,location:f.location.trim(),jobDate:f.jobDate,start:f.start,end:f.end,officers:Number(f.officers)||1,notes:(f.notes||'').trim(),status:'New'}; this.setState(s=>({requests:[req,...s.requests],requestOpen:false,screen:'requests'})); this.toastMsg('Request '+nid+' saved as New'); }
   setF(k,v){ this.setState(s=>({form:{...s.form,[k]:v}})); }
-  saveCreate(){ const f=this.state.form; if(!f.customer.trim()||!f.location.trim()){ this.toastMsg('Enter a customer and location first'); return; } const nums=this.state.jobs.map(j=>parseInt(j.id.replace('PN-',''),10)||0); const nid='PN-'+(Math.max(0,...nums)+1); const job={id:nid,customer:f.customer.trim(),location:f.location.trim(),date:f.date,start:f.start,end:f.end,required:Number(f.required)||1,status:'Draft',posted:false,description:(f.description||'').trim()||'No description provided.',instructions:(f.instructions||'').trim(),cancelReason:'',officers:[],photos:[],billing:'Not Billed',invoice:'',billedDate:''}; this.setState(s=>({jobs:[job,...s.jobs],createOpen:false,screen:'jobDetail',jobId:nid,jobTab:'overview'})); this.toastMsg('Job '+nid+' created as Draft'); }
+  toggleCustomerDropdown(){ this.setState(s=>({customerDropdownOpen:!s.customerDropdownOpen})); }
+  selectCustomer(v){ this.setState(s=>({customerDropdownOpen:false,form:{...s.form,customerMode:v,customer:v}})); }
+  addCustomerInline(){ const name=(this.state.customerDraft||'').trim(); if(!name){ this.toastMsg('Enter a customer name first'); return; } this.setState(s=>({customCustomers:Array.from(new Set([...(s.customCustomers||[]),name])),customerDraft:'',customerDropdownOpen:false,form:{...s.form,customerMode:name,customer:name}})); }
+  saveCreate(){ const f=this.state.form; if(!f.customer.trim()||!f.location.trim()){ this.toastMsg('Enter a customer and location first'); return; } const lat=Number(f.lat), lng=Number(f.lng), radius=Number(f.radiusM); if(!Number.isFinite(lat)||lat<-90||lat>90){ this.toastMsg('Enter a valid latitude between -90 and 90'); return; } if(!Number.isFinite(lng)||lng<-180||lng>180){ this.toastMsg('Enter a valid longitude between -180 and 180'); return; } if(!Number.isFinite(radius)||radius<20){ this.toastMsg('Enter a job radius of at least 20 meters'); return; } const nums=this.state.jobs.map(j=>parseInt(j.id.replace('PN-',''),10)||0); const nid='PN-'+(Math.max(0,...nums)+1); const job={id:nid,customer:f.customer.trim(),location:f.location.trim(),site:{lat,lng,radiusM:Math.round(radius)},date:f.date,start:f.start,end:f.end,required:Number(f.required)||1,status:'Draft',posted:false,description:(f.description||'').trim()||'No description provided.',instructions:(f.instructions||'').trim(),cancelReason:'',officers:[],photos:[],billing:'Not Billed',invoice:'',billedDate:''}; this.setState(s=>({jobs:[job,...s.jobs],createOpen:false,screen:'jobDetail',jobId:nid,jobTab:'overview'})); this.toastMsg('Job '+nid+' created as Draft'); }
 
   _mutJob(id,fn){ this.setState(s=>({jobs:s.jobs.map(j=> j.id===id? fn({...j}) : j)})); }
   postWhatsApp(id){ this._mutJob(id,j=>{ j.posted=true; if(j.status==='Draft') j.status='Waiting for Officers'; return j; }); this.toastMsg('Job posted to WhatsApp group'); }
@@ -1369,12 +1552,13 @@ class Component extends DCLogic {
   closeOfficer(){ this.setState({officerOpen:false, officerEditId:null}); }
   setOF(k,v){ this.setState(s=>({oform:{...s.oform,[k]:v}})); }
   saveOfficer(){ const f=this.state.oform; if(!f.name.trim()||f.phone.replace(/[^0-9]/g,'').length<6){ this.toastMsg('Enter a name and valid WhatsApp number'); return; } const editId=this.state.officerEditId; if(editId){ this.setState(s=>({officers:s.officers.map(o=> o.id===editId?{...o,name:f.name.trim(),phone:f.phone.trim(),status:f.status,ic:!!f.ic,rate:Number(f.rate)||14,notes:(f.notes||'').trim()}:o), officerOpen:false, officerEditId:null})); this.toastMsg('Officer '+f.name.trim()+' updated'); return; } const nums=this.state.officers.map(o=>parseInt(o.id.replace('OF-',''),10)||0); const nid='OF-'+String(Math.max(0,...nums)+1).padStart(2,'0'); const officer={id:nid,name:f.name.trim(),phone:f.phone.trim(),status:f.status,ic:!!f.ic,rate:Number(f.rate)||14,jobsCount:0,notes:(f.notes||'').trim()}; this.setState(s=>({officers:[officer,...s.officers],officerOpen:false})); this.toastMsg('Officer '+f.name.trim()+' added'); }
-  openPhotoForm(jobId){ const job=this.state.jobs.find(j=>j.id===jobId); this.setState({opAddOpen:true, opForm:{date:(job&&job.date)||'', time:'', photo:'', photoName:''}}); }
+  openPhotoForm(jobId,time){ const job=this.state.jobs.find(j=>j.id===jobId); this.setState({opAddOpen:true, evidenceOpenTime:time||this.state.evidenceOpenTime, opForm:{date:(job&&job.date)||'', time:time||'', photo:'', photoName:''}}); }
   cancelPhotoForm(){ this.setState({opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
   setOPF(k,v){ this.setState(s=>({opForm:{...s.opForm,[k]:v}})); }
   pickPhoto(e){ const file=e&&e.target&&e.target.files&&e.target.files[0]; if(!file){ return; } if(!/^image\//.test(file.type)){ this.toastMsg('Please choose an image file'); return; } const rd=new FileReader(); rd.onload=()=>{ this.setState(s=>({opForm:{...s.opForm,photo:rd.result,photoName:file.name}})); }; rd.readAsDataURL(file); }
   clearPhotoPick(){ this.setState(s=>({opForm:{...s.opForm,photo:'',photoName:''}})); }
-  saveOfficerPhoto(jobId,oid){ const job=this.state.jobs.find(j=>j.id===jobId); if(!job) return; const part=job.officers.find(o=>o.oid===oid); if(!part) return; const f=this.state.opForm; if(!f.photo){ this.toastMsg('Attach the photo first'); return; } const t=(f.time||'').trim(); if(!/^\d{1,2}:\d{2}$/.test(t)){ this.toastMsg('Enter the time the officer sent the photo, e.g. 18:20'); return; } const [hh,mm]=t.split(':'); if(+hh>23||+mm>59){ this.toastMsg('Enter a valid 24-hour time, e.g. 18:20'); return; } const time=String(+hh).padStart(2,'0')+':'+mm; if(!f.date){ this.toastMsg('Pick the date the photo was sent'); return; } const stamp=this.dLabel(f.date); const uid='m-'+oid+'-'+time.replace(':','')+'-'+job.photos.length; this._mutJob(jobId,j=>{ j.photos=[...j.photos,{time:time,status:'received',by:part.name,at:time,dateStamp:stamp,manual:true,uid:uid,src:f.photo}]; return j; }); this.setState({opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); this.toastMsg('Photo added for '+part.name+' · '+stamp+' '+time); }
+  saveOfficerPhoto(jobId,oid){ const job=this.state.jobs.find(j=>j.id===jobId); if(!job) return; const part=job.officers.find(o=>o.oid===oid); if(!part) return; const f=this.state.opForm; if(!f.photo){ this.toastMsg('Attach the photo first'); return; } const t=(f.time||'').trim(); if(!/^\d{1,2}:\d{2}$/.test(t)){ this.toastMsg('Enter the time the officer sent the photo, e.g. 18:20'); return; } const [hh,mm]=t.split(':'); if(+hh>23||+mm>59){ this.toastMsg('Enter a valid 24-hour time, e.g. 18:20'); return; } const time=String(+hh).padStart(2,'0')+':'+mm; if(!f.date){ this.toastMsg('Pick the date the photo was sent'); return; } const stamp=this.dLabel(f.date); const uid='m-'+oid+'-'+time.replace(':','')+'-'+job.photos.length; this._mutJob(jobId,j=>{ const idx=j.photos.findIndex(p=>p.time===time&&p.by===part.name); if(idx>=0){ j.photos=j.photos.map((p,k)=>{ if(k!==idx) return p; const cur=(p.images&&p.images.length)?p.images.slice():(p.status==='received'?[{src:p.src||'',by:p.by||part.name,at:p.at||time,dateStamp:p.dateStamp||stamp,manual:!!p.manual}]:[]); cur.push({src:f.photo,by:'Admin (on behalf of officer)',at:time,dateStamp:stamp,manual:true,fileName:f.photoName}); return {...p,status:'received',images:cur,src:p.src||f.photo,at:p.at||time}; }); return j; } j.photos=[...j.photos,{time:time,status:'received',by:part.name,at:time,dateStamp:stamp,manual:true,uid:uid,src:f.photo,images:[{src:f.photo,by:'Admin (on behalf of officer)',at:time,dateStamp:stamp,manual:true,fileName:f.photoName}]}]; return j; }); this.setState({opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); this.toastMsg('Photo added for '+part.name+' · '+stamp+' '+time); }
+  toggleEvidenceTime(time){ this.setState(s=>({evidenceOpenTime:s.evidenceOpenTime===time?null:time, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}})); }
   toggleProfileMenu(){ this.setState(s=>({profileMenuOpen:!s.profileMenuOpen})); }
   closeProfileMenu(){ this.setState({profileMenuOpen:false}); }
   openAdminProfile(){ this.setState(s=>({screen:'profile', profileMenuOpen:false, pform:{name:s.admin.name,email:s.admin.email,phone:s.admin.phone}, pwOpen:false, pwForm:{current:'',next:'',confirm:''}})); }
@@ -1387,15 +1571,22 @@ class Component extends DCLogic {
   savePassword(){ const f=this.state.pwForm; if(!f.current){ this.toastMsg('Enter your current password'); return; } if((f.next||'').length<8){ this.toastMsg('New password must be at least 8 characters'); return; } if(f.next!==f.confirm){ this.toastMsg('New passwords do not match'); return; } this.setState(s=>({admin:{...s.admin,pwChanged:'just now'}, pwOpen:false, pwForm:{current:'',next:'',confirm:''}})); this.toastMsg('Password updated'); }
   logout(){ this.setState({profileMenuOpen:false}); this.toastMsg('You have been logged out (demo)'); }
   openReport(){ this.setState({reportOpen:true}); }
+  openJobReport(id){ this.setState({jobId:id, reportOpen:true}); }
+  toggleReportEdit(){ this.setState(s=>({reportEditing:!s.reportEditing, reportMenu:null})); }
+  toggleReportMenu(i){ this.setState(s=>({reportMenu:s.reportMenu===i?null:i})); }
+  removeReportProofPhoto(jobId,i){ this._mutJob(jobId,j=>{ const ph={...j.photos[i]}, time=ph.time||ph.at||j.start, actor=this.state.admin.name||'Admin'; const base=(ph.images&&ph.images.length)?ph.images.slice():(ph.src||ph.status==='received'?[{src:ph.src||'',by:ph.by||'Officer',at:ph.at||time,dateStamp:ph.dateStamp||this.dLabel(j.date),manual:!!ph.manual}]:[]); const idx=base.map(x=>!x.removed).lastIndexOf(true); if(idx<0) return j; base[idx]={...base[idx],removed:true,removedBy:actor,removedAt:this.TODAY,removeReason:'Removed by admin from Job Report because the proof photo was unclear'}; const active=base.filter(x=>!x.removed).slice(-1)[0]; ph.images=base; ph.audit=[...(ph.audit||[]),{type:'Photo removed',by:actor,at:this.dLabel(this.TODAY),note:'Original uploader kept. Photo hidden from current proof because it was unclear.'}]; ph.src=active?active.src:''; ph.at=active?(active.at||ph.at):ph.at; ph.status=active?'received':'missing'; j.photos=j.photos.map((x,k)=>k===i?ph:x); return j; }); this.setState({reportMenu:null}); this.toastMsg('Proof photo removed; audit history kept'); }
+  replaceReportProofPhoto(jobId,i,e){ const file=e&&e.target&&e.target.files&&e.target.files[0]; if(!file) return; if(!/^image\//.test(file.type)){ this.toastMsg('Please choose an image file'); return; } const rd=new FileReader(); rd.onload=()=>{ this._mutJob(jobId,j=>{ const ph={...j.photos[i]}; const time=ph.time||ph.at||j.start, actor=this.state.admin.name||'Admin'; const cur=(ph.images&&ph.images.length)?ph.images.slice():(ph.src||ph.status==='received'?[{src:ph.src||'',by:ph.by||'Officer',at:ph.at||time,dateStamp:ph.dateStamp||this.dLabel(j.date),manual:!!ph.manual}]:[]); const idx=cur.map(x=>!x.removed).lastIndexOf(true); if(idx>=0) cur[idx]={...cur[idx],removed:true,removedBy:actor,removedAt:this.TODAY,removeReason:'Replaced by admin from Job Report because the proof photo was unclear'}; cur.push({src:rd.result,by:actor+' (admin replacement)',at:time,dateStamp:this.dLabel(j.date),manual:true,fileName:file.name,replacement:true}); ph.images=cur; ph.status='received'; ph.by=ph.by||'Unassigned'; ph.at=ph.at||time; ph.src=rd.result; ph.manual=true; ph.audit=[...(ph.audit||[]),{type:'Photo replaced',by:actor,at:this.dLabel(this.TODAY),note:'Admin replaced the report-visible proof with '+file.name+'. Original officer upload remains in evidence history.'}]; j.photos=j.photos.map((x,k)=>k===i?ph:x); return j; }); this.setState({reportMenu:null}); this.toastMsg('Report proof photo replaced; audit history kept'); }; rd.readAsDataURL(file); }
+  openReportAudit(i){ this.setState({reportAudit:i, reportMenu:null}); }
+  closeReportAudit(){ this.setState({reportAudit:null}); }
   openPhotoView(pv){ this.setState({photoView:{time:pv.time, images:pv.images||[], idx:pv.idx||0}}); }
   closePhotoView(){ this.setState({photoView:null}); }
   photoStep(d){ this.setState(s=>{ const pv=s.photoView; if(!pv||!pv.images.length) return {}; const n=pv.images.length; return {photoView:{...pv, idx:((pv.idx+d)%n+n)%n}}; }); }
   attachCheckpointPhoto(jobId,i,e){ const file=e&&e.target&&e.target.files&&e.target.files[0]; if(!file){ return; } if(!/^image\//.test(file.type)){ this.toastMsg('Please choose an image file'); return; } const rd=new FileReader(); rd.onload=()=>{ this._mutJob(jobId,j=>{ const ph={...j.photos[i]}; const time=ph.time; const cur=(ph.images&&ph.images.length)?ph.images.slice():(ph.status==='received'?[{src:ph.src||'',by:ph.by||'Officer',at:ph.at||time,dateStamp:ph.dateStamp,manual:!!ph.manual}]:[]); cur.push({src:rd.result,by:'Admin (on behalf of officer)',at:time,dateStamp:this.dLabel(j.date),manual:true}); ph.images=cur; ph.status='received'; ph.by=ph.by||'Admin (on behalf of officer)'; ph.at=ph.at||time; ph.src=ph.src||rd.result; j.photos=j.photos.map((x,k)=>k===i?ph:x); return j; }); this.toastMsg('Photo added to '+this.state.jobs.find(j=>j.id===jobId).photos[i].time+' checkpoint'); }; rd.readAsDataURL(file); }
-  openOfficerDetail(oid){ this.setState({officerDetailOid:oid, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
-  closeOfficerDetail(){ this.setState({officerDetailOid:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
+  openOfficerDetail(oid){ this.setState({officerDetailOid:oid, evidenceOpenTime:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
+  closeOfficerDetail(){ this.setState({officerDetailOid:null, evidenceOpenTime:null, opAddOpen:false, opForm:{date:'',time:'',photo:'',photoName:''}}); }
   openOfficerProfile(id){ this.setState({officerProfileId:id}); }
   closeOfficerProfile(){ this.setState({officerProfileId:null}); }
-  closeReport(){ this.setState({reportOpen:false}); }
+  closeReport(){ this.setState({reportOpen:false, reportEditing:false, reportAudit:null, reportMenu:null}); }
   printReport(){ try{ window.print(); }catch(e){} }
   markPaid(pid){ this.setState(s=>({payments:s.payments.map(p=>p.id===pid?{...p,status:'Paid',paidDate:this.TODAY}:p)})); this.toastMsg('Payment marked as paid'); }
   openPayHistory(name){ this.setState({payHistOfficer:name}); }
@@ -1439,6 +1630,7 @@ class Component extends DCLogic {
     const todayJobsList=jobs.filter(j=>j.date===this.TODAY&&j.status!=='Cancelled').map(enrich);
     const missingList=missingAll;
     const notBilledList=notBilledJobs.map(j=>({jobId:j.id,customer:j.customer,jobDate:this.dLabel(j.date),open:()=>this.openJob(j.id)}));
+    const customerOptions=Array.from(new Set(jobs.map(j=>j.customer).concat(S.customCustomers||[]).filter(Boolean))).sort().map(c=>({value:c,label:c,pick:()=>this.selectCustomer(c),style:(S.form.customer===c?'width:100%;padding:9px 11px;border:none;background:#F4F4F4;color:#0A0A0A;font-size:12.5px;font-weight:700;text-align:left;cursor:pointer;':'width:100%;padding:9px 11px;border:none;background:#fff;color:#262626;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;')}));
 
     const titles={dashboard:['Overview','Dashboard'],requests:['Operations','Job Requests'],jobs:['Operations','Jobs'],jobDetail:['Operations · Jobs',S.jobId],shift:['Operations','Shift Monitoring'],officers:['People','Officer Management'],summary:['Finance','Completed Job Summary'],payments:['Finance','Officer Payment'],billing:['Finance','Customer Billing'],reports:['Insights','Reports'],profile:['Account','My Profile']};
     const t=titles[S.screen]||['',''];
@@ -1506,17 +1698,37 @@ class Component extends DCLogic {
 
     // ---- Officer duty detail (click an officer row) ----
     let officerDetailView=null;
-    if(S.officerDetailOid){ const o=sel.officers.find(x=>x.oid===S.officerDetailOid); if(o){ const rec=S.officers.find(r=>r.id===o.oid)||{}; const worked=(o.actualStart&&o.actualEnd)?this.hrs(o.actualStart,o.actualEnd):(o.onDuty?schedHours:0); const pay=worked*o.rate; const myPhotos=sel.photos.filter(p=>p.status==='received'&&p.by===o.name); const dutyState= o.onDuty?(o.actualEnd?'Completed shift':'On duty now'):(o.confirmed?'Confirmed — not on duty':'Awaiting confirmation');
+    if(S.officerDetailOid){ const o=sel.officers.find(x=>x.oid===S.officerDetailOid); if(o){ const rec=S.officers.find(r=>r.id===o.oid)||{}; const worked=(o.actualStart&&o.actualEnd)?this.hrs(o.actualStart,o.actualEnd):(o.onDuty?schedHours:0); const pay=worked*o.rate; const myPhotos=sel.photos.filter(p=>p.by===o.name&&((p.images&&p.images.length)||p.status==='received')); const dutyState= o.onDuty?(o.actualEnd?'Completed shift':'On duty now'):(o.confirmed?'Confirmed — not on duty':'Awaiting confirmation');
+      const site=sel.site||null, hasSite=!!(site&&site.lat!=null&&site.lng!=null);
+      const makeLocRow=(kind,loc,time)=>{ const has=!!(loc&&loc.lat!=null&&loc.lng!=null), dist=this.metersBetween(loc,site), inside=has&&hasSite&&dist!=null&&dist<=(site.radiusM||120), distLabel=dist==null?'—':(dist>=1000?(dist/1000).toFixed(2)+' km':dist+' m'), coords=this.formatCoords(loc);
+        const txt=kind+' GPS for '+o.name+' · '+coords+' · '+((loc&&loc.address)||sel.location)+' · '+distLabel+' from '+sel.location;
+        return {label:kind+' · '+(time||'—'), address:(loc&&loc.address)||'GPS point captured by officer', coords, accuracy:((loc&&loc.accuracyM)||'—')+' m', distanceLabel:distLabel, pill:this.locationPill(inside,has&&hasSite), mapDotStyle:'position:absolute;width:7px;height:7px;border-radius:50%;background:'+(inside?'#0A7A3B':'#B31D15')+';border:2px solid #fff;box-shadow:0 0 0 1px '+(inside?'#0A7A3B':'#B31D15')+';left:'+(inside?'45px':'63px')+';top:'+(inside?'21px':'8px')+';', copy:()=>this.copy(txt,kind+' GPS copied — '+o.name)}; };
+      const locationRows=[];
+      if(o.checkInLocation) locationRows.push(makeLocRow('Check-in',o.checkInLocation,o.actualStart));
+      if(o.checkOutLocation) locationRows.push(makeLocRow('Check-out',o.checkOutLocation,o.actualEnd));
+      const hasAnyLocation=locationRows.length>0&&hasSite;
+      const allInside=hasAnyLocation&&locationRows.every(r=>r.pill.label==='Inside site');
+      const anyOutside=locationRows.some(r=>r.pill.label==='Outside site');
+      const hasCheckInGps=!!(o.checkInLocation&&o.checkInLocation.lat!=null&&o.checkInLocation.lng!=null), hasCheckOutGps=!!(o.checkOutLocation&&o.checkOutLocation.lat!=null&&o.checkOutLocation.lng!=null);
+      const locTextStyle=(ok,done)=>'font-size:11px;font-weight:600;margin-top:4px;color:'+(ok?'#0A7A3B':(done?'#8A5A00':'#A3A3A3'))+';';
+      const pgMap={}; myPhotos.forEach((p,gi)=>{ const key=p.time||'—'; if(!pgMap[key]) pgMap[key]=[]; const base=(p.images&&p.images.length)?p.images:[{src:p.src||'',by:p.by||o.name,at:p.at||p.time,dateStamp:p.dateStamp||this.dLabel(sel.date),manual:!!p.manual}]; base.forEach((im,ii)=>{ const status=im.removed?' · Removed from report':(im.replacement?' · Report replacement':''); pgMap[key].push({time:key, at:im.at||key, dateStamp:im.dateStamp||p.dateStamp||this.dLabel(sel.date), manual:!!im.manual, stampLabel:(im.dateStamp||p.dateStamp||this.dLabel(sel.date))+' · '+(im.at||key)+status, src:im.src||'', hasSrc:!!im.src, noSrc:!im.src, slotId:'odph-'+sel.id+'-'+o.oid+'-'+(p.uid||(key.replace(':','')+'-'+gi))+'-'+ii}); }); });
+      const pgTimes=Object.keys(pgMap).sort();
+      const openEvidenceTime=S.evidenceOpenTime||pgTimes[0]||null;
+      const photoGroups=pgTimes.map(time=>{ const open=openEvidenceTime===time; return {time, countLabel:pgMap[time].length+' photo'+(pgMap[time].length===1?'':'s'), photos:pgMap[time], open, stateLabel:open?'Hide photos':'Show photos', chevronStyle:open?'transform:rotate(90deg);transition:transform .12s;':'transition:transform .12s;', canAdd:!isCancelled, addOpen:S.opAddOpen&&S.opForm.time===time, toggle:()=>this.toggleEvidenceTime(time), add:()=>this.openPhotoForm(sel.id,time)}; });
+      const photoCount=photoGroups.reduce((a,g)=>a+g.photos.length,0);
       officerDetailView={ oid:o.oid, name:o.name, initials:o.name.split(' ').map(x=>x[0]).slice(0,2).join(''), phone:rec.phone||'—', icPill:icPill(o.ic), confirmed:o.confirmed, onDuty:o.onDuty,
         confirmPill: o.confirmed?smallPill('#E8F5EC','#0A7A3B','Confirmed'):smallPill('#FAFAFA','#525252','Not confirmed'),
         dutyPill: o.onDuty?smallPill('#E8EEF9','#1F4FA3','On duty'):smallPill('#FAFAFA','#525252','Off duty'),
         dutyState, checkIn:o.actualStart||'—', checkOut:o.actualEnd||'—', workedLabel:worked?worked.toFixed(2)+'h':'—', rateLabel:this.money(o.rate)+'/h', payLabel:this.money(pay),
+        checkInLocationStatus:hasCheckInGps?'Check-in with location':(o.actualStart?'Check-in without location':'Not checked in yet'), checkInLocationStyle:locTextStyle(hasCheckInGps,!!o.actualStart),
+        checkOutLocationStatus:hasCheckOutGps?'Check-out with location':(o.actualEnd?'Check-out without location':'Not checked out yet'), checkOutLocationStyle:locTextStyle(hasCheckOutGps,!!o.actualEnd),
+        hasLocation:hasAnyLocation, noLocation:!hasAnyLocation, locationPill: anyOutside?this.locationPill(false,true):this.locationPill(allInside,hasAnyLocation), locationRows, jobCoords:this.formatCoords(site), jobRadius:((site&&site.radiusM)||120)+' m',
         dutyLink:this.dutyLinkFor(sel,o), copyDutyLink:()=>this.copy(this.dutyLinkFor(sel,o),'Duty link copied — '+o.name), copyDutyMsg:()=>this.copy(this.dutyMsgFor(sel,o),'Duty message copied — '+o.name),
         scheduledLabel:sel.start+'–'+sel.end, jobId:sel.id, jobCustomer:sel.customer, jobLocation:sel.location, jobDate:this.dLabel(sel.date),
-        photos:myPhotos.map((p,pi)=>({time:p.time, at:p.at||p.time, dateStamp:p.dateStamp||this.dLabel(sel.date), manual:!!p.manual, stampLabel:(p.dateStamp||this.dLabel(sel.date))+' · '+(p.at||p.time), src:p.src||'', hasSrc:!!p.src, noSrc:!p.src, slotId:'odph-'+sel.id+'-'+o.oid+'-'+(p.uid||(p.time.replace(':','')+'-'+pi))})), photoCount:myPhotos.length, hasPhotos:myPhotos.length>0, noPhotos:myPhotos.length===0,
+        photoGroups, photoCount, hasPhotos:photoGroups.length>0, noPhotos:photoGroups.length===0,
         expectedCount:sel.photos.length, close:()=>this.closeOfficerDetail(), canAddPhoto:!isCancelled,
         addOpen:S.opAddOpen, formDate:S.opForm.date, formTime:S.opForm.time, formPhoto:S.opForm.photo, formPhotoName:S.opForm.photoName, hasPhoto:!!S.opForm.photo, uploadLabel:S.opForm.photo?'Replace photo':'Choose a photo to upload',
-        openPhotoForm:()=>this.openPhotoForm(sel.id), savePhoto:()=>this.saveOfficerPhoto(sel.id,o.oid), cancelPhoto:()=>this.cancelPhotoForm(), clearPhoto:()=>this.clearPhotoPick(),
+        openPhotoForm:()=>this.openPhotoForm(sel.id), savePhoto:()=>this.saveOfficerPhoto(sel.id,o.oid), cancelPhoto:()=>this.cancelPhotoForm(), clearPhoto:()=>this.clearPhotoPick(), legacyAddStyle:S.opForm.time?'display:none;':'margin-top:12px;border:1px solid #E5E5E5;border-radius:6px;padding:14px;background:#FAFAFA;',
         opf:{ date:(e)=>this.setOPF('date',e.target.value), time:(e)=>this.setOPF('time',e.target.value), photo:(e)=>this.pickPhoto(e) },
         copyWa:()=>this.copy('Hi '+o.name+', regarding Job '+sel.id+' at '+sel.location+' — ','WhatsApp message copied') }; } }
     const stepDefs=[['Draft','Draft created'],['posted','Posted / Waiting'],['Confirmed','Officers confirmed'],['Ongoing','Job ongoing'],['Awaiting Signature','Awaiting sign-off'],['Completed','Completed']];
@@ -1529,7 +1741,7 @@ class Component extends DCLogic {
     const jobMsg='🛡️ *PilotNow Job '+sel.id+'*\n📍 '+sel.location+'\n📅 '+this.dLabel(sel.date)+', '+sel.start+'–'+sel.end+'\n👮 '+sel.required+' officers needed\nRate: '+this.money(sel.officers[0]?sel.officers[0].rate:16)+'/h\n\n'+sel.description+'\n\nReply *IN* to volunteer.';
     const reminderMsg='⏰ Reminder — Job '+sel.id+' at '+sel.location+' starts today '+sel.start+'. Please send your hourly proof photo every hour to this group. – PilotNow Ops';
     const selPhotos=sel.photos.map((p,i)=>{ const meta= p.status==='received'?{bg:'#E8F5EC',fg:'#0A7A3B',label:'Received',dot:'#0A7A3B'}: p.status==='missing'?{bg:'#FFF1F0',fg:'#B31D15',label:'Missing',dot:'#FF3B30'}:{bg:'#FAFAFA',fg:'#525252',label:'Upcoming',dot:'#A3A3A3'}; const isReceived=p.status==='received'; const dateStamp=p.dateStamp||this.dLabel(sel.date);
-      const imgs=(p.images&&p.images.length)?p.images:(isReceived?[{src:p.src||'',by:p.by||'Officer',at:p.at||p.time,dateStamp:dateStamp,manual:!!p.manual}]:[]);
+      const imgs=((p.images&&p.images.length)?p.images:(isReceived?[{src:p.src||'',by:p.by||'Officer',at:p.at||p.time,dateStamp:dateStamp,manual:!!p.manual}]:[])).filter(im=>!im.removed);
       const gallery=imgs.map((im,k)=>({src:im.src||'', hasSrc:!!im.src, noSrc:!im.src, by:im.by||'Officer', at:im.at||p.time, dateStamp:im.dateStamp||dateStamp, manual:!!im.manual, slotId:'ppview-'+sel.id+'-'+i+'-'+k, filmSlot:'ppfilm-'+sel.id+'-'+i+'-'+k}));
       const photoCount=gallery.length; const byLabel= photoCount>1?(photoCount+' photos received'):('by '+(p.by||'Officer')+' · '+(p.at||p.time));
       return {...p, meta, pill:smallPill(meta.bg,meta.fg,meta.label), dotStyle:`width:9px;height:9px;border-radius:50%;background:${meta.dot};flex:0 0 9px;`, canMark:p.status!=='received'&&!isCompleted&&!isCancelled, isReceived, canAddMore:isReceived&&!isCompleted&&!isCancelled, photoCount, viewLabel:photoCount>1?('View '+photoCount+' photos'):'View photo', receivedLabel:p.status==='received'?byLabel:(p.status==='missing'?'No photo received':'Not due yet'), openPhoto:()=>this.openPhotoView({time:p.time, images:gallery, idx:0}), mark:()=>this.markPhoto(sel.id,i), upload:()=>this.uploadPhoto(sel.id,i), attach:(e)=>this.attachCheckpointPhoto(sel.id,i,e) }; });
@@ -1556,14 +1768,17 @@ class Component extends DCLogic {
     const rMin=(t)=>{ const p=(t||'').split(':'); return p.length===2?(+p[0]*60+ +p[1]):null; };
     const rHash=(s)=>{ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h.toString(16).toUpperCase().slice(-4).padStart(4,'0'); };
     const rNoun=(n,w)=>n+' '+w+(n===1?'':'s');
-    const recPhotos=sel.photos.filter(p=>p.status==='received');
-    const missPhotos=sel.photos.filter(p=>p.status==='missing');
+    const activePhotoCount=(p)=>{ const imgs=(p.images&&p.images.length)?p.images:(p.status==='received'?[{src:p.src||'',by:p.by||'Officer',at:p.at||p.time,dateStamp:p.dateStamp||this.dLabel(sel.date),manual:!!p.manual}]:[]); return imgs.filter(im=>!im.removed).length; };
+    const recPhotos=sel.photos.map((p,i)=>({...p,_idx:i,_activeCount:activePhotoCount(p)})).filter(p=>p.status==='received'&&p._activeCount>0);
+    const missPhotos=sel.photos.map((p,i)=>({...p,_idx:i})).filter(p=>p.status==='missing');
     // proof tiles grouped by officer, in officer order
     const proofTiles=[]; let lateCount=0;
+    const proofTileBase='position:relative;border:1px solid #E5E5E5;border-radius:2px;height:92px;background:linear-gradient(to top right, transparent calc(50% - 0.5px), #EDEDED calc(50% - 0.5px), #EDEDED calc(50% + 0.5px), transparent calc(50% + 0.5px)),linear-gradient(to bottom right, transparent calc(50% - 0.5px), #EDEDED calc(50% - 0.5px), #EDEDED calc(50% + 0.5px), transparent calc(50% + 0.5px));';
+    const proofTileStyle=(p)=>{ const imgs=(p.images&&p.images.length)?p.images:[]; const edited=imgs.some(im=>im.removed||im.replacement)||(p.audit&&p.audit.length); return {edited, label:imgs.some(im=>im.replacement&&!im.removed)?'Replaced':(imgs.some(im=>im.removed)?'Edited':'Edited'), style:proofTileBase+(S.reportEditing?'border-color:#F0C36A;box-shadow:0 0 0 2px #FFF4D6;':'')}; };
     sel.officers.forEach(o=>{ const arr=recPhotos.filter(p=>p.by===o.name).sort((a,b)=>a.time<b.time?-1:1); const ini=rInit(o.name);
       arr.forEach((p,i)=>{ const cm=rMin(p.time), am=rMin(/^\d/.test(p.at||'')?p.at:p.time); const late= am!=null&&cm!=null && (am-cm)>2; if(late) lateCount++; let tag= i===0?'IN': (i===arr.length-1?'OUT':''); if(late) tag='LATE';
-        proofTiles.push({time:p.time, cap:ini+(tag?' · '+tag:''), late, capStyle: late?'color:#8A5A00;':'color:#A3A3A3;'}); }); });
-    missPhotos.forEach(p=>proofTiles.push({time:p.time, cap:'MISS', late:false, missing:true, capStyle:'color:#B31D15;'}));
+        const ts=proofTileStyle(p); proofTiles.push({time:p.time, cap:ini+(tag?' · '+tag:''), late, capStyle: late?'color:#8A5A00;':'color:#A3A3A3;', canMenu:S.reportEditing, menuOpen:S.reportMenu===p._idx, menu:()=>this.toggleReportMenu(p._idx), remove:()=>this.removeReportProofPhoto(sel.id,p._idx), replace:(e)=>this.replaceReportProofPhoto(sel.id,p._idx,e), audit:()=>this.openReportAudit(p._idx), tileStyle:ts.style, edited:ts.edited, showEditLabel:S.reportEditing&&ts.edited, editLabel:ts.label}); }); });
+    if(S.reportEditing) missPhotos.forEach(p=>{ const hasAudit=!!((p.images&&p.images.length)||(p.audit&&p.audit.length)); const ts=proofTileStyle(p); proofTiles.push({time:p.time, cap:'REMOVED', late:false, missing:true, capStyle:'color:#B31D15;', canMenu:hasAudit, menuOpen:S.reportMenu===p._idx, menu:()=>this.toggleReportMenu(p._idx), remove:()=>this.toastMsg('No active proof photo to remove'), replace:(e)=>this.replaceReportProofPhoto(sel.id,p._idx,e), audit:()=>this.openReportAudit(p._idx), tileStyle:ts.style, edited:ts.edited, showEditLabel:true, editLabel:'Hidden from report'}); });
     // officers attendance rows
     const attendance=sel.officers.map(o=>{ const ci=rMin(o.actualStart), si=rMin(sel.start), co=rMin(o.actualEnd), se=rMin(sel.end);
       const inDelta= ci!=null&&si!=null? Math.abs(ci-si)+'m':'—'; const outDelta= co!=null&&se!=null? Math.abs(co-se)+'m':'—';
@@ -1580,20 +1795,27 @@ class Component extends DCLogic {
       ref:'DO-'+sel.id.replace(/-/g,'')+'-001',
       eyebrow:'DELIVERY ORDER · '+sel.customer.toUpperCase(),
       title:sel.location,
-      summary:'Service '+statusVerb+' '+sel.start+'–'+sel.end+' SGT on '+this.dLabel(sel.date)+' by '+rNoun(sel.officers.length,'officer')+', with '+selPhotosReceived+' of '+sel.photos.length+' proof events received'+(lateCount?(' ('+lateCount+' late)'):'')+' and '+rNoun(remarks.length,'operational remark')+' logged. No incidents.',
+      summary:'Service '+statusVerb+' '+sel.start+'–'+sel.end+' SGT on '+this.dLabel(sel.date)+' by '+rNoun(sel.officers.length,'officer')+', with '+recPhotos.length+' of '+sel.photos.length+' active report proof events'+(lateCount?(' ('+lateCount+' late)'):'')+' and '+rNoun(remarks.length,'operational remark')+' logged. No incidents.',
       clientName:sel.customer, clientBilling:'Billing · '+sel.customer+' Pte Ltd', clientContact:'Contact · PilotNow Ops WhatsApp desk',
       siteName:sel.location, siteAddr:'Singapore', siteCoords:'1.'+(2839+(rMin(sel.start)||0)%600)+', 103.'+(8100+(rMin(sel.end)||0)%800)+' · radius 120m',
       jobLine1:sel.id+' · '+schedHours+'h shift', jobLine2:sel.date+' · '+sel.start+' → '+sel.end+' SGT',
       outcome: sel.status==='Completed'?'Closed · Signed': sel.status==='Cancelled'?'Cancelled': sel.status,
       outcomeSub: signed?('Signed off · '+sel.customer+' · 21:42 SGT'):('Status · '+sel.status),
       attendance, officerCountLabel:rNoun(sel.officers.length,'officer').toUpperCase(),
-      proofTiles, proofSummary:selPhotosReceived+' / '+sel.photos.length+' RECEIVED'+(lateCount?(' · '+lateCount+' LATE'):''), hasProof:proofTiles.length>0,
+      proofSectionStyle:S.reportEditing?'margin-top:26px;border:2px solid #F0C36A;border-radius:6px;background:#FFFDF5;padding:14px;':'margin-top:26px;',
+      proofTiles, proofSummary:recPhotos.length+' / '+sel.photos.length+' ACTIVE'+(lateCount?(' · '+lateCount+' LATE'):''), hasProof:proofTiles.length>0, showProofTiles:proofTiles.length>0,
       remarks:remarks.map(r=>({time:(r.time+'').toUpperCase()+' SGT', who:r.who, text:r.text})), remarksSummary:rNoun(remarks.length,'REMARK').toUpperCase()+' · 0 INCIDENTS', hasRemarks:remarks.length>0, noRemarks:remarks.length===0,
       signed, signManagerName:sel.customer, signManagerSub:this.dLabel(this.TODAY).toUpperCase()+' · 21:42 SGT · TOKEN ----'+rHash(sel.id+'m'),
       signOpsName:'Serene Lau', signOpsSub:this.dLabel(this.TODAY).toUpperCase()+' · 21:30 SGT · OPS LEAD',
       footerRef:'DO-'+sel.id.replace(/-/g,'')+'-001 · SHA ----'+rHash(sel.id+'sha'),
       generatedLabel:this.dLabel(this.TODAY),
       hasOfficers:sel.officers.length>0 };
+    const auditPhoto=Number.isInteger(S.reportAudit)?sel.photos[S.reportAudit]:null;
+    const auditImages=auditPhoto?((auditPhoto.images&&auditPhoto.images.length)?auditPhoto.images:(auditPhoto.status==='received'?[{src:auditPhoto.src||'',by:auditPhoto.by||'Officer',at:auditPhoto.at||auditPhoto.time,dateStamp:auditPhoto.dateStamp||this.dLabel(sel.date),manual:!!auditPhoto.manual}]:[])):[];
+    const reportAuditView=auditPhoto?{title:(auditPhoto.time||'—')+' checkpoint · '+(auditPhoto.by||'Unassigned'),events:[{type:'Original upload recorded',by:auditPhoto.by||'Officer',at:auditPhoto.at||auditPhoto.time||'—',note:'Uploader identity is locked and cannot be changed from the report.'}]
+      .concat(auditImages.filter(im=>im.manual&&!im.removed).map(im=>({type:'Additional photo added',by:im.by||'Admin',at:im.dateStamp||im.at||'—',note:(im.fileName||'Admin-uploaded proof')+' was added from the Job Report.'})))
+      .concat(auditImages.filter(im=>im.removed).map(im=>({type:'Photo removed',by:im.removedBy||'Admin',at:im.removedAt?this.dLabel(im.removedAt):'—',note:im.removeReason||'Photo hidden from current proof.'})))
+      .concat((auditPhoto.audit||[]).filter(a=>!['Photo removed','Photo added'].includes(a.type)).map(a=>({type:a.type,by:a.by,at:a.at,note:a.note})))}:{title:'',events:[]};
 
 
     // ---- Shift monitoring (ongoing/active jobs with photo checklists) ----
@@ -1631,7 +1853,9 @@ class Component extends DCLogic {
         hasRows:mine.length>0, noRows:mine.length===0, close:()=>this.closePayHistory() }; }
 
     // ---- Billing ----
-    const billingView=completedJobs.map(j=>({id:j.id,customer:j.customer,dateLabel:this.dLabel(j.date),pill:billPill(j.billing),invoice:j.invoice||'—',billedDateLabel:j.billedDate?this.dLabel(j.billedDate):'—',isBilled:j.billing==='Billed',notBilled:j.billing!=='Billed',bill:()=>this.openBill(j.id),unbill:()=>this.setBillNotBilled(j.id)}));
+    const billQuery=(S.billQuery||'').trim().toLowerCase();
+    const billingFiltered=completedJobs.filter(j=>(!billQuery || j.customer.toLowerCase().includes(billQuery) || j.id.toLowerCase().includes(billQuery)) && (!S.billDate || j.date===S.billDate));
+    const billingView=billingFiltered.map(j=>({id:j.id,customer:j.customer,dateLabel:this.dLabel(j.date),pill:billPill(j.billing),invoice:j.invoice||'—',billedDateLabel:j.billedDate?this.dLabel(j.billedDate):'—',isBilled:j.billing==='Billed',notBilled:j.billing!=='Billed',bill:()=>this.openBill(j.id),unbill:()=>this.setBillNotBilled(j.id)}));
     const billTargetRaw=jobs.find(j=>j.id===S.billId);
     const billTarget=billTargetRaw?{id:billTargetRaw.id,customer:billTargetRaw.customer,dateLabel:this.dLabel(billTargetRaw.date)}:{id:'',customer:'',dateLabel:''};
 
@@ -1641,13 +1865,13 @@ class Component extends DCLogic {
     const reportTabs=reportTypes.map(r=>({label:r,active:rt===r,set:()=>this.setState({reportType:r}),style:rt===r?'padding:7px 13px;border-radius:4px;border:none;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;':'padding:7px 13px;border-radius:4px;border:1px solid #E5E5E5;background:#fff;color:#525252;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;'}));
     let reportCols=[], reportRows=[], reportTotal='';
     const gridCols=(n)=>`grid-template-columns:repeat(${n},1fr);`;
-    if(rt==='Completed job report'){ reportCols=['Job','Customer','Date','Officers','Total payable']; let tot=0; reportRows=completedJobs.map(j=>{ const sh=this.hrs(j.start,j.end); const t=j.officers.reduce((a,o)=>a+((o.actualStart&&o.actualEnd)?this.hrs(o.actualStart,o.actualEnd):sh)*o.rate,0); tot+=t; return [j.id,j.customer,this.dLabel(j.date),String(j.officers.length),this.money(t)]; }); reportTotal='Total payable across jobs: '+this.money(tot); }
+    if(rt==='Completed job report'){ reportCols=['Job','Customer','Date','Officers','Total payable','Job Report']; let tot=0; reportRows=completedJobs.map(j=>{ const sh=this.hrs(j.start,j.end); const t=j.officers.reduce((a,o)=>a+((o.actualStart&&o.actualEnd)?this.hrs(o.actualStart,o.actualEnd):sh)*o.rate,0); tot+=t; return [{isLink:true,isText:false,v:j.id,open:()=>this.openJob(j.id)},j.customer,this.dLabel(j.date),String(j.officers.length),this.money(t),{isAction:true,isText:false,v:'View',open:()=>this.openJobReport(j.id)}]; }); reportTotal='Total payable across jobs: '+this.money(tot); }
     else if(rt==='Officer payment report'){ reportCols=['Officer','Job','Date','Hours','Rate','Total','Status']; let tot=0; reportRows=S.payments.map(p=>{ tot+=p.hours*p.rate; return [p.officer,p.jobId,this.dLabel(p.jobDate),p.hours.toFixed(2)+'h',this.money(p.rate),this.money(p.hours*p.rate),p.status]; }); reportTotal='Total payroll: '+this.money(tot); }
     else if(rt==='Missing photo report'){ reportCols=['Job','Customer','Checkpoint','Status']; reportRows=[]; jobs.forEach(j=>j.photos.forEach(p=>{ if(p.status==='missing') reportRows.push([j.id,j.customer,p.time,'Missing']); })); reportTotal=reportRows.length+' missing checkpoint(s)'; }
     else if(rt==='Customer billing report'){ reportCols=['Job','Customer','Date','Invoice','Status']; reportRows=completedJobs.map(j=>[j.id,j.customer,this.dLabel(j.date),j.invoice||'—',j.billing]); reportTotal=completedJobs.filter(j=>j.billing==='Not Billed').length+' job(s) not yet billed'; }
     else { reportCols=['Officer','WhatsApp','Status','Total jobs']; reportRows=S.officers.map(o=>[o.name,o.phone,o.status,String(o.jobsCount)]); reportTotal=S.officers.length+' officers on record'; }
     const reportColStyle='display:grid;'+gridCols(reportCols.length);
-    const reportRowsView=reportRows.map((cells,i)=>({cells:cells.map((c,k)=>({v:c,k})),i}));
+    const reportRowsView=reportRows.map((cells,i)=>({cells:cells.map((c,k)=> typeof c==='object'&&c ? {...c,k,isText:!!c.isText,isAction:!!c.isAction,isLink:!!c.isLink} : {v:c,k,isText:true,isAction:false,isLink:false}),i}));
 
     return {
       navStyle, navTo, badge, stats,
@@ -1667,7 +1891,7 @@ class Component extends DCLogic {
       rf:{ customer:(e)=>this.setRF('customer',e.target.value), method:(e)=>this.setRF('method',e.target.value), location:(e)=>this.setRF('location',e.target.value), jobDate:(e)=>this.setRF('jobDate',e.target.value), start:(e)=>this.setRF('start',e.target.value), end:(e)=>this.setRF('end',e.target.value), officers:(e)=>this.setRF('officers',e.target.value), notes:(e)=>this.setRF('notes',e.target.value) },
       methodOptions:['WhatsApp','Email'].map(m=>({value:m,label:m})),
       photoViewOpen:!!S.photoView, photoView:(()=>{ const pv=S.photoView; if(!pv||!pv.images.length) return {images:[]}; return {time:pv.time, count:pv.images.length, countLabel:pv.images.length+(pv.images.length>1?' photos':' photo'), images:pv.images.map(im=>({...im, stampLabel:(im.dateStamp||'')+' · '+(im.at||'')})) }; })(), closePhotoView:()=>this.closePhotoView(),
-      reportOpen:S.reportOpen, reportView, officerDetailOpen:!!officerDetailView, officerDetail:officerDetailView||{photos:[]}, officerProfileOpen:!!officerProfileView, officerProfile:officerProfileView||{history:[]}, openReport:()=>this.openReport(), closeReport:()=>this.closeReport(), printReport:()=>this.printReport(), copyReport:()=>this.copy('PilotNow Job Report — '+sel.id+' — '+sel.customer+' — '+this.dLabel(sel.date)+' — '+selPhotosReceived+' evidence photos — total payable '+this.money(selTotalPay),'Job report copied'),
+      reportOpen:S.reportOpen, reportEditing:S.reportEditing, reportEditLabel:S.reportEditing?'Done editing':'Edit report photos', reportEditBtnStyle:S.reportEditing?'display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:none;border-radius:4px;background:#0A0A0A;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;':'display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #E5E5E5;border-radius:4px;background:#fff;color:#262626;font-size:12.5px;font-weight:600;cursor:pointer;', reportView, reportAuditOpen:Number.isInteger(S.reportAudit), reportAuditView, closeReportAudit:()=>this.closeReportAudit(), officerDetailOpen:!!officerDetailView, officerDetail:officerDetailView||{photos:[]}, officerProfileOpen:!!officerProfileView, officerProfile:officerProfileView||{history:[]}, openReport:()=>this.openReport(), closeReport:()=>this.closeReport(), toggleReportEdit:()=>this.toggleReportEdit(), printReport:()=>this.printReport(), copyReport:()=>this.copy('PilotNow Job Report — '+sel.id+' — '+sel.customer+' — '+this.dLabel(sel.date)+' — '+selPhotosReceived+' evidence photos — total payable '+this.money(selTotalPay),'Job report copied'),
       addPick:S.addPick, onAddPick:(e)=>this.setState({addPick:e.target.value}), doAddOfficer:()=>this.addOfficer(sel.id),
       backToJobs:()=>this.setState({screen:'jobs'}),
       shiftJobs, shiftHasJobs, shiftTotals,
@@ -1677,14 +1901,15 @@ class Component extends DCLogic {
       payStatusTabs, payDate:S.payDate, payDateLabel, payFilteredTotal, payHasDate:!!S.payDate,
       onPayDate:(e)=>this.setState({payDate:e.target.value}), clearPayDate:()=>this.setState({payDate:''}),
       payHistoryOpen:!!payHistoryView, payHistory:payHistoryView||{rows:[]},
-      billingView,
+      billingView, billQuery:S.billQuery, billDate:S.billDate, billHasFilters:!!((S.billQuery||'').trim()||S.billDate), billFilteredCount:billingFiltered.length+'/'+completedJobs.length,
+      onBillQuery:(e)=>this.setState({billQuery:e.target.value}), onBillDate:(e)=>this.setState({billDate:e.target.value}), clearBillFilters:()=>this.setState({billQuery:'',billDate:''}),
       billOpen:S.billOpen, billTarget, bform:S.bform, closeBill:()=>this.closeBill(), confirmBill:()=>this.confirmBill(),
       bf:{ invoice:(e)=>this.setBF('invoice',e.target.value), billedDate:(e)=>this.setBF('billedDate',e.target.value) },
       reportTabs, reportType:rt, reportCols:reportCols.map((c,i)=>({v:c,i})), reportColStyle, reportRowsView, reportTotal,
       exportReport:()=>this.toastMsg('Report exported (demo)'),
       createJob:()=>this.createJob(),
-      createOpen:S.createOpen, form:S.form, closeCreate:()=>this.closeCreate(), saveCreate:()=>this.saveCreate(),
-      cf:{ customer:(e)=>this.setF('customer',e.target.value), location:(e)=>this.setF('location',e.target.value), date:(e)=>this.setF('date',e.target.value), start:(e)=>this.setF('start',e.target.value), end:(e)=>this.setF('end',e.target.value), required:(e)=>this.setF('required',e.target.value), description:(e)=>this.setF('description',e.target.value), instructions:(e)=>this.setF('instructions',e.target.value) },
+      createOpen:S.createOpen, form:S.form, customerOptions, customerDropdownOpen:S.customerDropdownOpen, customerSelectedLabel:S.form.customer||'Select customer', customerDraft:S.customerDraft, customerToggle:()=>this.toggleCustomerDropdown(), addCustomerInline:()=>this.addCustomerInline(), closeCreate:()=>this.closeCreate(), saveCreate:()=>this.saveCreate(),
+      cf:{ customerDraft:(e)=>this.setState({customerDraft:e.target.value}), customer:(e)=>this.setF('customer',e.target.value), location:(e)=>this.setF('location',e.target.value), lat:(e)=>this.setF('lat',e.target.value), lng:(e)=>this.setF('lng',e.target.value), radiusM:(e)=>this.setF('radiusM',e.target.value), date:(e)=>this.setF('date',e.target.value), start:(e)=>this.setF('start',e.target.value), end:(e)=>this.setF('end',e.target.value), required:(e)=>this.setF('required',e.target.value), description:(e)=>this.setF('description',e.target.value), instructions:(e)=>this.setF('instructions',e.target.value) },
       reqOptions:[1,2,3,4,5,6,7,8].map(n=>({value:String(n),label:n+' officer'+(n>1?'s':'')})),
       officerOpen:S.officerOpen, oform:S.oform, openOfficer:()=>this.openOfficer(), closeOfficer:()=>this.closeOfficer(), saveOfficer:()=>this.saveOfficer(),
       officerModalTitle:S.officerEditId?'Edit officer':'Add new officer', officerModalSub:S.officerEditId?('Update the profile for '+S.officerEditId+'.'):'Create a profile for an officer who volunteered.', officerModalCta:S.officerEditId?'Save changes':'Add officer',
